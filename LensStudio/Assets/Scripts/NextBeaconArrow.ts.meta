@@ -1,0 +1,73 @@
+- !<AssetImportMetadata/3e38957a-0a93-4eff-b17c-120b93938a6e>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 6efe061c-77be-448c-baeb-86aac6e2493f
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 6efe061c-77be-448c-baeb-86aac6e2493f
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 3de6c5ed-415d-4c5f-8510-ed5f5ef25e8f
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/3de6c5ed-415d-4c5f-8510-ed5f5ef25e8f>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  ComponentUid: fbcdc668-25e3-437a-9c04-b144050ce618
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    arrowObject: false
+    hideWhenNoTarget: false
+    horizontalOnly: false
+    minTargetDistanceCm: false
+    routeBeaconController: false
+    smoothing: false
+    tipDirection: false
+    verbose: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - arrowObject: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      tipDirection: !<Vec3> {x: 0.000000, y: 1.000000, z: 0.000000}
+      routeBeaconController: !<reference.ScriptComponent> 00000000-0000-0000-0000-000000000000
+      horizontalOnly: true
+      smoothing: 0.250000
+      hideWhenNoTarget: true
+      minTargetDistanceCm: !<float> 1.000000
+      verbose: false
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Arrow"}'
+    - '// @input SceneObject arrowObject {"hint":"The cone / arrow SceneObject whose world rotation will be driven to point at the next beacon."}'
+    - "// @input vec3 tipDirection = {0,1,0} {\"hint\":\"The direction the cone's tip points along in the arrow's own local space. Default (0, 1, 0) matches Lens Studio's primitive 'Cone' which points along local +Y. Use (0, 0, -1) if your arrow points along Lens Studio forward (-Z).\"}"
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Route"}'
+    - "// @input Component.ScriptComponent routeBeaconController {\"hint\":\"The MobileRouteController driving the beacons. Its next unvisited waypoint is the arrow's target.\"}"
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Aiming"}'
+    - '// @input bool horizontalOnly = true {"hint":"If true, the arrow only yaws (rotates around world Y) and stays level, so it looks like a compass needle. If false, the arrow also pitches up/down toward the beacon."}'
+    - '// @input float smoothing = 0.25 {"hint":"Rotation smoothing per frame. 1 = snap instantly, lower = smoother follow. Expressed as the fraction of the remaining angle covered each frame at 60 FPS.", "widget":"slider", "min":0, "max":1, "step":0.01}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Visibility"}'
+    - "// @input bool hideWhenNoTarget {\"hint\":\"If true, the arrow is hidden whenever there is no valid next beacon (route not built yet, no GPS fix, or route complete). Leave false while developing in preview (there's no GPS there), and turn on for production builds if you want the cone to disappear on arrival.\"}"
+    - '// @input float minTargetDistanceCm = 1 {"hint":"Minimum distance (world centimetres) from arrow to target before rotation is updated. Prevents jitter when the target is effectively on top of the arrow."}'
+    - '// @input bool verbose {"hint":"If true, logs a one-line status every ~1s showing whether the arrow has a target and its current bearing."}'

@@ -1,0 +1,93 @@
+- !<AssetImportMetadata/b3563692-e339-441a-99af-bd2e50d4f516>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> f8c58c7a-01ab-4933-bf58-2307623d7efe
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> f8c58c7a-01ab-4933-bf58-2307623d7efe
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> e6f7e759-8e92-4523-9990-693ae649712d
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/e6f7e759-8e92-4523-9990-693ae649712d>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  ComponentUid: 4eddb5e8-d10c-482a-89b2-e6b700a5c1ce
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    albumArtImage: false
+    albumText: false
+    artistText: false
+    bridge: false
+    internetModule: false
+    pauseIcon: false
+    pausePlayButton: false
+    placeholderTitle: false
+    playIcon: false
+    prevButton: false
+    remoteMediaModule: false
+    skipButton: false
+    titleText: false
+    verbose: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - bridge: !<reference.ScriptComponent> 00000000-0000-0000-0000-000000000000
+      internetModule: !<reference.InternetModule> 00000000-0000-0000-0000-000000000000
+      remoteMediaModule: !<reference.RemoteMediaModule> 00000000-0000-0000-0000-000000000000
+      pausePlayButton: !<MappingBased.AssignableType> 00000000-0000-0000-0000-000000000000
+      playIcon: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      pauseIcon: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      skipButton: !<MappingBased.AssignableType_1> 00000000-0000-0000-0000-000000000000
+      prevButton: !<MappingBased.AssignableType_2> 00000000-0000-0000-0000-000000000000
+      albumArtImage: !<reference.Image> 00000000-0000-0000-0000-000000000000
+      titleText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      artistText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      albumText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      verbose: false
+      placeholderTitle: ""
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Bridge"}'
+    - "// @input Component.ScriptComponent bridge {\"hint\":\"The SpecsRiderBridge ScriptComponent. Subscribes to the 'nowPlaying' topic and sends 'media/*' requests.\"}"
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Modules"}'
+    - '// @input Asset.InternetModule internetModule {"hint":"Drag the Internet Module asset from the Asset Browser here. Required to mint the spectacleskit:// album-art resource."}'
+    - '// @input Asset.RemoteMediaModule remoteMediaModule {"hint":"Drag the Remote Media Module asset from the Asset Browser here. Used to decode the album-art JPEG bytes streamed from the iOS app."}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Transport buttons"}'
+    - "// @input AssignableType pausePlayButton {\"hint\":\"RectangleButton (SpectaclesUIKit) the user taps to toggle play/pause. Sends 'media/toggle'.\"}"
+    - "// @input SceneObject playIcon {\"hint\":\"Child SceneObject of the pause/play button showing the 'play' icon. Enabled while paused.\"}"
+    - "// @input SceneObject pauseIcon {\"hint\":\"Child SceneObject of the pause/play button showing the 'pause' icon. Enabled while playing.\"}"
+    - "// @input AssignableType_1 skipButton {\"hint\":\"RectangleButton (SpectaclesUIKit) the user taps to skip to the next track. Sends 'media/next'.\"}"
+    - "// @input AssignableType_2 prevButton {\"hint\":\"Optional RectangleButton (SpectaclesUIKit) for previous track. Sends 'media/previous' if assigned.\"}"
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Now Playing UI"}'
+    - '// @input Component.Image albumArtImage {"hint":"Image component receiving album art. Its mainPass.baseTex is overwritten when the bridged artwork version changes."}'
+    - '// @input Component.Text titleText {"hint":"Text component showing the current track title."}'
+    - '// @input Component.Text artistText {"hint":"Text component showing the current track artist(s)."}'
+    - '// @input Component.Text albumText {"hint":"Text component showing the current track album."}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Behaviour"}'
+    - '// @input bool verbose {"hint":"If true, prints verbose now-playing updates to the log."}'
+    - '// @input string placeholderTitle {"hint":"Optional fallback text used when the bridge has not yet supplied a value (e.g. while disconnected)."}'

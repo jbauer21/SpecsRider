@@ -1,0 +1,57 @@
+- !<AssetImportMetadata/a4200cca-c4ad-431e-aafb-e78718e0a650>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> d81989ad-7303-4000-8f84-02d161222904
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> d81989ad-7303-4000-8f84-02d161222904
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 10f70804-d97e-4967-95bf-0c84a5ad9968
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/10f70804-d97e-4967-95bf-0c84a5ad9968>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  ComponentUid: ed0a9254-39a7-4c17-aa73-7db9d8806ebc
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    autoReconnect: false
+    debugText: false
+    reconnectDelayS: false
+    verbose: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - autoReconnect: true
+      reconnectDelayS: !<float> 2.000000
+      verbose: false
+      debugText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Reconnection"}'
+    - '// @input bool autoReconnect = true {"hint":"If true, the bridge automatically reopens the session after a disconnect."}'
+    - '// @input float reconnectDelayS = 2 {"hint":"Delay (seconds) before retrying the session after a disconnect.", "widget":"slider", "min":0.5, "max":30, "step":0.5}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Debug"}'
+    - '// @input bool verbose {"hint":"If true, prints lifecycle / subscription messages to the log."}'
+    - '// @input Component.Text debugText {"hint":"Optional Text component that displays a one-line bridge status (state + last error)."}'

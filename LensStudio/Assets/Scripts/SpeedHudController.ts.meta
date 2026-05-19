@@ -1,0 +1,68 @@
+- !<AssetImportMetadata/8a3d4e24-7c6e-4d41-9f1c-2de57c77f3b0>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 3ccb5015-8aea-4a37-886c-b6087a66f075
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 3ccb5015-8aea-4a37-886c-b6087a66f075
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 2c41b6d8-4a90-4f5c-9a1d-8e4c6d2b1a07
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/2c41b6d8-4a90-4f5c-9a1d-8e4c6d2b1a07>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  ComponentUid: 7b2f9a15-3d51-4e8a-b0c2-5f1e9d7a4b63
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    maxSpeedKmh: false
+    minDisplaySpeedKmh: false
+    outputSmoothAlpha: false
+    pollIntervalS: false
+    speedText: false
+    staleTimeoutS: false
+    useMph: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - speedText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      useMph: false
+      pollIntervalS: 0.500000
+      outputSmoothAlpha: 0.250000
+      minDisplaySpeedKmh: !<float> 1.000000
+      maxSpeedKmh: !<float> 80.000000
+      staleTimeoutS: !<float> 3.000000
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @input Component.Text speedText {"hint":"Text component on the HUD that will display the current speed."}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Units"}'
+    - '// @input bool useMph {"label":"Use mph", "hint":"When enabled, the HUD shows miles per hour. When disabled, it shows kilometers per hour."}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Sampling"}'
+    - "// @input float pollIntervalS = 0.5 {\"hint\":\"How often (in seconds) to sample the user's world position. Lower = more responsive, higher = smoother.\", \"widget\":\"slider\", \"min\":0.05, \"max\":2, \"step\":0.05}"
+    - '// @input float outputSmoothAlpha = 0.25 {"hint":"Exponential moving-average factor applied to the displayed speed. 1 = no smoothing, 0 = frozen.", "widget":"slider", "min":0, "max":1, "step":0.01}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Display"}'
+    - '// @input float minDisplaySpeedKmh = 1 {"hint":"Speeds (in km/h) below this threshold are displayed as 0 to eliminate tracking jitter at rest."}'
+    - '// @input float maxSpeedKmh = 80 {"hint":"Maximum speed (in km/h) that will be displayed. Values above this are clamped."}'
+    - '// @input float staleTimeoutS = 3 {"hint":"If no new sample arrives within this many seconds, the HUD falls back to 0 (safety against stalled tracking)."}'

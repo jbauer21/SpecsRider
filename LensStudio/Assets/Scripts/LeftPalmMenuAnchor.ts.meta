@@ -1,0 +1,88 @@
+- !<AssetImportMetadata/9f7b3ff2-7683-4a8c-9623-e6327c6340aa>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 65ec7d47-9012-4579-a15e-754fc388d466
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 65ec7d47-9012-4579-a15e-754fc388d466
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 19ee9c21-4f3f-4913-b744-71802c050603
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/19ee9c21-4f3f-4913-b744-71802c050603>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  ComponentUid: 6a1598f4-50a6-4869-ae96-d5a2b87114ef
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    closeAngleDeg: false
+    closeDelayS: false
+    fadeInS: false
+    fadeOutS: false
+    localOffset: false
+    matchPalmRotation: false
+    menuObject: false
+    minScale: false
+    openAngleDeg: false
+    openDwellS: false
+    rotationOffsetDeg: false
+    useBackOfHand: false
+    useScale: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - menuObject: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      localOffset: !<Vec3> {x: 0.000000, y: 3.000000, z: 0.000000}
+      matchPalmRotation: true
+      rotationOffsetDeg: !<Vec3> {x: 0.000000, y: 0.000000, z: 0.000000}
+      useBackOfHand: false
+      openAngleDeg: !<float> 25.000000
+      closeAngleDeg: !<float> 45.000000
+      openDwellS: 0.150000
+      closeDelayS: 0.100000
+      fadeInS: 0.180000
+      fadeOutS: 0.150000
+      useScale: true
+      minScale: 0.200000
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Menu Target"}'
+    - '// @input SceneObject menuObject {"hint":"The root SceneObject to anchor above the left palm."}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Placement"}'
+    - "// @input vec3 localOffset = {0,3,0} {\"hint\":\"Offset from the palm center, expressed in the palm's local basis (x=right, y=up, z=forward relative to the middle knuckle).\"}"
+    - '// @input bool matchPalmRotation = true {"hint":"If true, the menu rotates with the palm. If false, the menu keeps its current world rotation (useful if you billboard it elsewhere)."}'
+    - "// @input vec3 rotationOffsetDeg {\"hint\":\"Extra rotation (Euler angles in degrees) applied on top of the palm rotation. Interpreted in the palm's local frame: x=pitch around palm-right, y=yaw around palm-up, z=roll around palm-forward.\"}"
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Facing Detection"}'
+    - '// @input bool useBackOfHand {"hint":"If true, the menu opens when the BACK of the hand faces the camera (looking down at the dorsal side, e.g. handlebar grip pose). If false, it opens when the PALM faces the camera (classic palm-up menu)."}'
+    - '// @input float openAngleDeg = 25 {"hint":"Hand-to-camera angle (degrees) at or below which the menu begins to open. Measured against the palm by default; against the back of the hand when useBackOfHand is enabled.", "widget":"slider", "min":0, "max":60, "step":1}'
+    - '// @input float closeAngleDeg = 45 {"hint":"Hand-to-camera angle (degrees) at or above which the menu begins to close. Should be greater than openAngleDeg for hysteresis.", "widget":"slider", "min":0, "max":90, "step":1}'
+    - '// @input float openDwellS = 0.15 {"hint":"How long (seconds) the palm must stay facing the camera before the menu opens. Prevents accidental glances.", "widget":"slider", "min":0, "max":1, "step":0.01}'
+    - "// @input float closeDelayS = 0.1 {\"hint\":\"Grace period (seconds) during which brief tracking hiccups won't close the menu.\", \"widget\":\"slider\", \"min\":0, \"max\":1, \"step\":0.01}"
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Transition"}'
+    - '// @input float fadeInS = 0.18 {"hint":"Seconds to fully fade/scale in.", "widget":"slider", "min":0.01, "max":1, "step":0.01}'
+    - '// @input float fadeOutS = 0.15 {"hint":"Seconds to fully fade/scale out.", "widget":"slider", "min":0.01, "max":1, "step":0.01}'
+    - '// @input bool useScale = true {"hint":"When enabled, the menu root is scaled between minScale and its authored scale to create a pop-in effect."}'
+    - '// @input float minScale = 0.2 {"hint":"Starting scale (as a fraction of authored scale) at alpha 0. 1 disables the scale effect.", "widget":"slider", "min":0, "max":1, "step":0.01}'

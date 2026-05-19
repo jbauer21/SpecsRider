@@ -1,0 +1,91 @@
+- !<AssetImportMetadata/a89e0188-b5e3-43a5-a80d-23f1c8a7311a>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 17f04da8-4316-4786-85c7-f271fe387c0f
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 17f04da8-4316-4786-85c7-f271fe387c0f
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> ea60a82d-f7ec-43a9-9133-ee56d625ac83
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/ea60a82d-f7ec-43a9-9133-ee56d625ac83>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  ComponentUid: 30895daa-5d56-4f34-9062-5c4b1f81a660
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    cameraObject: false
+    heightOffsetCm: false
+    hideTipWhenInactive: false
+    pathMaterial: false
+    routeBeaconController: false
+    tipForward: false
+    tipHeightOffsetCm: false
+    tipObject: false
+    tubeRadiusCm: false
+    tubeSides: false
+    verbose: false
+    visibleAheadM: false
+    visibleBehindM: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - routeBeaconController: !<reference.ScriptComponent> 00000000-0000-0000-0000-000000000000
+      cameraObject: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      pathMaterial: !<reference.Material> 00000000-0000-0000-0000-000000000000
+      tubeRadiusCm: !<float> 5.000000
+      tubeSides: !<float> 6.000000
+      heightOffsetCm: !<float> -150.000000
+      visibleBehindM: !<float> 1.000000
+      visibleAheadM: !<float> 20.000000
+      tipObject: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      tipForward: !<Vec3> {x: 0.000000, y: 0.000000, z: -1.000000}
+      tipHeightOffsetCm: !<float> 0.000000
+      hideTipWhenInactive: true
+      verbose: false
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Route source"}'
+    - '// @input Component.ScriptComponent routeBeaconController {"hint":"The MobileRouteController providing the dense polyline and user world position."}'
+    - "// @input SceneObject cameraObject {\"hint\":\"The Main Camera SceneObject. Its world position is used as a fallback when the controller can't provide a user position yet.\"}"
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Material"}'
+    - '// @input Asset.Material pathMaterial {"hint":"Material assigned to the tube. Cloned at runtime so each renderer instance owns its uniforms. With this script, a simple solid emissive color is enough; geometry trimming handles visibility."}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Tube geometry"}'
+    - "// @input float tubeRadiusCm = 5 {\"hint\":\"Tube radius in world centimetres. The tube's apparent thickness on screen.\", \"widget\":\"slider\", \"min\":0.5, \"max\":30, \"step\":0.5}"
+    - '// @input float tubeSides = 6 {"hint":"Number of sides on each ring of the tube. Higher = rounder, more vertices.", "widget":"slider", "min":3, "max":16, "step":1}'
+    - "// @input float heightOffsetCm = -150 {\"hint\":\"Vertical offset (world centimetres) applied to every polyline point relative to the controller's eye-level baseline. Default ~ -150 cm puts the line on the floor for a standing user.\"}"
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Visibility window (metres)"}'
+    - "// @input float visibleBehindM = 1 {\"hint\":\"How far behind the user's current path progress the line is still drawn (metres). 0 = the line ends exactly under the user.\", \"widget\":\"slider\", \"min\":0, \"max\":10, \"step\":0.1}"
+    - "// @input float visibleAheadM = 20 {\"hint\":\"How far ahead of the user's current path progress the line is drawn (metres). The arrowhead 'tipObject' caps the line at this distance.\", \"widget\":\"slider\", \"min\":1, \"max\":100, \"step\":1}"
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Arrow tip"}'
+    - '// @input SceneObject tipObject {"hint":"Optional SceneObject placed at the leading edge of the visible line each frame, oriented along the path. Use any mesh you like; pass nothing to skip."}'
+    - "// @input vec3 tipForward = {0,0,-1} {\"hint\":\"The tip's local-space forward direction, before this script drives its rotation. Lens Studio cones point along local +Y by default, so use (0,1,0) for a primitive cone. Use (0,0,-1) for a model that points along Lens Studio forward (-Z).\"}"
+    - "// @input float tipHeightOffsetCm {\"hint\":\"Vertical offset (world centimetres) applied to the tip's world position on top of the line's height offset. Useful if the tip mesh has its origin at its base / centre.\"}"
+    - "// @input bool hideTipWhenInactive = true {\"hint\":\"If true, the tip is hidden when the route isn't ready, the user has arrived, or the visible window has zero length.\"}"
+    - '// @ui {"widget":"separator"}'
+    - '// @input bool verbose {"hint":"If true, prints one-line status messages on build / disable."}'

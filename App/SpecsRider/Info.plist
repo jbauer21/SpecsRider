@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>CFBundleURLName</key>
+			<string>com.specsrider.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>specskitapp</string>
+			</array>
+		</dict>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>cmb</string>
+	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>SpecsRider uses your location as the starting point for cycling routes you send to your Spectacles.</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>SpecsRider mirrors what's playing in the Music app to your Spectacles and lets the lens control playback.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>bluetooth-central</string>
+	</array>
+</dict>
+</plist>

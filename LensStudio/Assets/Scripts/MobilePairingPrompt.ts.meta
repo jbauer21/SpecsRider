@@ -1,0 +1,62 @@
+- !<AssetImportMetadata/72a0c807-69ae-4fa3-aca9-3d892d46f41e>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 49ad9984-3d77-41e7-8046-50ebb3c81a7d
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 49ad9984-3d77-41e7-8046-50ebb3c81a7d
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 5315a5fd-270c-440a-aa2f-abc66374e10d
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/5315a5fd-270c-440a-aa2f-abc66374e10d>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  ComponentUid: 97c018e5-ecf6-4380-a93e-43b39640c1b9
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    bridge: false
+    message: false
+    messageText: false
+    verbose: false
+    warningObject: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - bridge: !<reference.ScriptComponent> 00000000-0000-0000-0000-000000000000
+      warningObject: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      messageText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      message: Mobile device is not connected! Make sure to pair the Spectacles within SpecsRider to continue!
+      verbose: false
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Bridge"}'
+    - '// @input Component.ScriptComponent bridge {"hint":"The SpecsRiderBridge ScriptComponent. Used to detect when the iOS companion app is connected."}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Warning UI"}'
+    - '// @input SceneObject warningObject {"hint":"SceneObject toggled on/off based on pairing state. Enabled while the phone is NOT connected, disabled once it is."}'
+    - "// @input Component.Text messageText {\"hint\":\"Optional Text component whose .text is set to 'message' on start. Leave empty if your prefab already has the copy baked in.\"}"
+    - '// @input string message = "Mobile device is not connected! Make sure to pair the Spectacles within SpecsRider to continue!" {"hint":"Copy shown to the user while the phone is not paired."}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Behaviour"}'
+    - '// @input bool verbose {"hint":"If true, prints pairing state transitions to the log."}'

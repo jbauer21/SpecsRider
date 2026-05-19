@@ -1,0 +1,83 @@
+- !<AssetImportMetadata/ed20b2af-ced6-46f2-a447-6bd855682873>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 5ca8949c-4cc6-4151-a69a-c31c45864aa3
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 5ca8949c-4cc6-4151-a69a-c31c45864aa3
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> ae2bc990-29d1-4adb-9c02-8fff2ec47922
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/ae2bc990-29d1-4adb-9c02-8fff2ec47922>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  ComponentUid: 106998a3-6707-4909-9baa-3fa207b3a048
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    beaconPrefab: false
+    bridge: false
+    cameraObject: false
+    debugRefreshIntervalS: false
+    debugText: false
+    navigationDataComponent: false
+    passDistanceMeters: false
+    smoothingEnabled: false
+    smoothingWindow: false
+    verbose: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - bridge: !<reference.ScriptComponent> 00000000-0000-0000-0000-000000000000
+      navigationDataComponent: !<reference.ScriptComponent> 00000000-0000-0000-0000-000000000000
+      cameraObject: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      beaconPrefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
+      passDistanceMeters: !<float> 15.000000
+      smoothingEnabled: true
+      smoothingWindow: !<float> 30.000000
+      verbose: false
+      debugText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      debugRefreshIntervalS: 0.250000
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Bridge"}'
+    - "// @input Component.ScriptComponent bridge {\"hint\":\"The SpecsRiderBridge ScriptComponent. Subscribes to the 'route' topic.\"}"
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Modules"}'
+    - '// @input Component.ScriptComponent navigationDataComponent {"hint":"The NavigationDataComponent from SpectaclesNavigationKit. Used as the source of UserPosition / GPS."}'
+    - '// @input SceneObject cameraObject {"hint":"The Main Camera SceneObject. Its world Y is read every frame to pin the destination beacon at eye level."}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"End-of-route Beacon"}'
+    - '// @input Asset.ObjectPrefab beaconPrefab {"hint":"Drag the ARNavigationPrefab here. One instance is spawned at the final destination only."}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Arrival"}'
+    - "// @input float passDistanceMeters = 15 {\"hint\":\"Distance, in metres, at which the user is considered to have 'arrived' at the destination beacon.\", \"widget\":\"slider\", \"min\":1, \"max\":50, \"step\":1}"
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Smoothing"}'
+    - "// @input bool smoothingEnabled = true {\"hint\":\"If true, the destination beacon's world position is smoothed via a moving-average filter to suppress GPS / compass jitter.\"}"
+    - '// @input float smoothingWindow = 30 {"hint":"Moving-average window length (in frames) for beacon position smoothing. ~30 = 0.5s at 60 FPS.", "widget":"slider", "min":1, "max":90, "step":1}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Debug"}'
+    - '// @input bool verbose {"hint":"If true, prints verbose route progress to the log."}'
+    - '// @input Component.Text debugText {"hint":"Optional Text component that displays robust live debug state (phase, GPS, route, beacon)."}'
+    - '// @input float debugRefreshIntervalS = 0.25 {"hint":"How often (in seconds) the debug Text is refreshed.", "widget":"slider", "min":0.1, "max":2, "step":0.1}'

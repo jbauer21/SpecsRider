@@ -1,0 +1,56 @@
+- !<AssetImportMetadata/87d664d4-8c5a-491c-9c74-512f1bd31855>
+  ImportedAssetIds:
+    ObjectPrefab: !<reference> 10f0d4ce-f5b3-438c-9dc5-a88a0d101a05
+  ImporterName: ObjectPrefabImporter
+  PrimaryAsset: !<reference> 10f0d4ce-f5b3-438c-9dc5-a88a0d101a05
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    ObjectPrefab: !<own> 6fa27ec3-cfdf-4eb0-8e75-8eb96324b959
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<ObjectPrefabAssetData/6fa27ec3-cfdf-4eb0-8e75-8eb96324b959>
+  Prototype: !<ObjectOwner/f3c5baed-be24-4312-96a6-ed3d8d90f5a9>
+    PackagePath: ""
+    objects:
+      - !<own> e3309332-02fe-44a5-74c4-d0ab1de1e54c
+- !<RenderMeshVisual/b519cc51-894b-49fe-776e-940638838508>
+  PrefabRemaps:
+    []
+  Name: Render Mesh Visual
+  Enabled: true
+  RenderOrder: 0
+  StretchMode: Stretch
+  VerticalAlignment: Center
+  HorizontalAlignment: Center
+  MeshShadowMode: None
+  ShadowColor: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+  ShadowDensity: 1.000000
+  Materials:
+    - !<reference> 3c9c59e9-dec0-4b37-be56-96f55efc00af
+  Mesh: !<reference> a8b335cd-bb85-45b0-ad23-076f49c0f848
+  Skin: !<reference> 00000000-0000-0000-0000-000000000000
+  BlendShapesEnabled: true
+  BlendNormals: false
+  BlendShapes:
+    {}
+- !<SceneObject/e3309332-02fe-44a5-74c4-d0ab1de1e54c>
+  PrefabRemaps:
+    []
+  Name: Tip
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 50.000000, y: 50.000000, z: 50.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> b519cc51-894b-49fe-776e-940638838508

@@ -1,0 +1,37 @@
+# ---- macOS ----
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+# ---- Lens Studio ----
+LensStudio/Cache/
+LensStudio/PluginsUserPreferences/
+LensStudio/Support/
+LensStudio/Workspaces/*/xcuserdata/
+LensStudio/**/*.lock
+LensStudio/**/*.log
+
+# ---- Xcode ----
+App/**/build/
+App/**/DerivedData/
+App/**/xcuserdata/
+App/**/*.xcuserstate
+App/**/*.xcuserdatad/
+App/**/project.xcworkspace/xcuserdata/
+
+# ---- Swift Package Manager ----
+App/**/.build/
+App/**/.swiftpm/xcode/xcuserdata/
+App/SpectaclesKit/.swiftpm/
+Package.resolved
+
+# ---- Editor / misc ----
+*.swp
+*.swo
+*~
+.idea/
+.vscode/

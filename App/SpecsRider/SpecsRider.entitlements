@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Required for SpectaclesKit's QLIC handshake, which calls
+         DCAppAttestService.attestKey(...) to authenticate this app to the
+         Spectacles. Without this entitlement Apple's App Attest framework
+         returns DCError.serverUnavailable (Code 4), which surfaces in the
+         SpectaclesKit log as:
+            QLICError.localProtocolError(... reason: "Failed to generate
+            share data", underlying: com.apple.devicecheck.error Code=4)
+         Use "development" for builds installed via Xcode or TestFlight
+         internal testing; switch to "production" when shipping via the
+         App Store. -->
+    <key>com.apple.developer.devicecheck.appattest-environment</key>
+    <string>development</string>
+</dict>
+</plist>
