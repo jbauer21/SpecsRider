@@ -1,12 +1,13 @@
 CollapsedEntities:
   type: stringset
   value:
-    size: 633
+    size: 636
     values:
       - Base.png
       - Cone.mesh
       - Echopark.hdr
       - Image 2.mat
+      - Image 3.mat
       - Image.mat
       - Image.png
       - Internet Module.internetModule
@@ -18,6 +19,8 @@ CollapsedEntities:
       - Materials/ImageMaterial 4.mat
       - Materials/ImageMaterial.mat
       - Materials/MusicIcon.png
+      - Materials/NoPhoneConnected.mat
+      - Materials/NoPhoneConnected.png
       - Materials/Pause.png
       - Materials/Play.png
       - Materials/RoutePath.mat

@@ -1249,7 +1249,7 @@
   Enabled: true
   ScriptAsset: !<reference> 49ad9984-3d77-41e7-8046-50ebb3c81a7d
   ScriptInputsDefault:
-    message: true
+    {}
   ScriptTypesDefault:
     {}
   ScriptInputs:
@@ -1257,7 +1257,7 @@
       bridge: !<reference.ScriptComponent> 1699c615-fd6d-4a20-a849-e7407518b641
       warningObject: !<reference.SceneObject> 84ae5bb4-b926-49d2-a6f9-ae15e1c2724d
       messageText: !<reference.Text> e83735ca-81d1-44d2-88d1-689a8ceb3765
-      message: Mobile device is not connected! Make sure to pair the Spectacles within SpecsRider to continue!
+      message: Connect to the SpecsRider App!
       verbose: true
   ScriptTypes:
     "":
@@ -1319,7 +1319,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: 7.532978, z: -34.807930}
+    Position: {x: -0.174402, y: 7.222994, z: -34.807930}
     Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
@@ -1801,6 +1801,21 @@
     - !<own> ec5cf781-7365-4db2-83df-e3d10556ffd3
   Components:
     []
+- !<SceneObject/69034912-858c-447d-b016-446a9bd7d45a>
+  PrefabRemaps:
+    []
+  Name: Object 0
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 2.719268, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 4.518219, y: 4.518219, z: 4.518219}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 831195d4-ea8e-435f-885c-98692e934afe
 - !<SceneObject/6b68dac4-1500-4f18-b600-14dbe4113c1f>
   PrefabRemaps:
     []
@@ -2157,7 +2172,7 @@
   PrefabRemaps:
     []
   Name: Debug
-  Enabled: true
+  Enabled: false
   Layers: 1
   LocalTransform: !<TransformEntity>
     Position: {x: 0.000000, y: -7.000000, z: -34.807930}
@@ -2168,6 +2183,25 @@
     []
   Components:
     - !<own> c8d33352-ae6b-4f39-b546-7ece83c7a53b
+- !<Image/831195d4-ea8e-435f-885c-98692e934afe>
+  PrefabRemaps:
+    []
+  Name: Image
+  Enabled: true
+  RenderOrder: 0
+  StretchMode: Fit
+  VerticalAlignment: Center
+  HorizontalAlignment: Center
+  MeshShadowMode: None
+  ShadowColor: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+  ShadowDensity: 1.000000
+  Materials:
+    - !<reference> b7a31fbd-051d-4908-bbe9-2b0e491eff30
+  FlipX: false
+  FlipY: false
+  RotationAngle: 0
+  Pivot: {x: 0.000000, y: 0.000000}
+  ExtentsTarget: !<reference> 00000000-0000-0000-0000-000000000000
 - !<SceneObject/84ae5bb4-b926-49d2-a6f9-ae15e1c2724d>
   PrefabRemaps:
     []
@@ -2175,12 +2209,12 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: 0.483175, z: -60.000000}
+    Position: {x: 0.000000, y: 0.000000, z: -34.807899}
     Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
-    Scale: {x: 0.711441, y: 0.711441, z: 0.711441}
+    Scale: {x: 1.403638, y: 1.403638, z: 1.403638}
     HasSegmentScaleCompensation: false
   Children:
-    []
+    - !<own> 69034912-858c-447d-b016-446a9bd7d45a
   Components:
     - !<own> e83735ca-81d1-44d2-88d1-689a8ceb3765
 - !<SceneObject/85b990fe-4a77-4e85-b87e-28981b812dd8>

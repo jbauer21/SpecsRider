@@ -122,6 +122,10 @@ export class RoutePathRenderer extends BaseScriptComponent {
   public tipForward: vec3 = new vec3(0, 0, -1)
 
   @input
+  @hint("The tip's local-space up direction. Used together with tipForward to lock the tip's roll so it stays upright (its base sits orthogonal to world up) as the path direction changes. Must not be parallel to tipForward. For a Lens Studio cone with axis along +Y, any side direction works, e.g. (0,0,1).")
+  public tipUp: vec3 = new vec3(0, 0, 1)
+
+  @input
   @hint("Vertical offset (world centimetres) applied to the tip's world position on top of the line's height offset. Useful if the tip mesh has its origin at its base / centre.")
   public tipHeightOffsetCm: number = 0
 
@@ -645,9 +649,16 @@ export class RoutePathRenderer extends BaseScriptComponent {
   /**
    * Drops the tip at the leading edge of the visible window and
    * orients its `tipForward` axis along the path's forward tangent
-   * there. `hasMoreRoute` is false once the visible window butts up
-   * against the destination, in which case we hide the tip (the
-   * destination beacon takes over as the marker).
+   * there. The tangent is projected onto the horizontal plane so the
+   * tip always sits orthogonal to world up - the line on the floor
+   * never pitches the tip up or down even if the path's vertices
+   * have any vertical jitter. The tip's roll is also locked so its
+   * `tipUp` axis points toward world up; this prevents the cone /
+   * arrowhead from twisting around its own axis as the path turns,
+   * which would otherwise leave its base looking skewed instead of
+   * orthogonal to the line. `hasMoreRoute` is false once the visible
+   * window butts up against the destination, in which case we hide
+   * the tip (the destination beacon takes over as the marker).
    */
   private updateTip(trimmed: vec3[], hasMoreRoute: boolean): void {
     if (isNull(this.tipObject)) {
@@ -665,14 +676,20 @@ export class RoutePathRenderer extends BaseScriptComponent {
 
     const last = trimmed[trimmed.length - 1]
     const prev = trimmed[trimmed.length - 2]
-    const tangent = safeNormalize(last.sub(prev), new vec3(0, 0, -1))
+    const horizontalTangent = safeNormalize(
+      new vec3(last.x - prev.x, 0, last.z - prev.z),
+      new vec3(0, 0, -1),
+    )
 
     const xform = this.tipObject.getTransform()
     const tipPos = new vec3(last.x, last.y + this.tipHeightOffsetCm, last.z)
     xform.setWorldPosition(tipPos)
 
-    const localFwd = safeNormalize(this.tipForward, new vec3(0, 0, -1))
-    xform.setWorldRotation(rotationFromTo(localFwd, tangent))
+    const localFwd = safeNormalize(this.tipForward, new vec3(0, 1, 0))
+    const localUp = safeNormalize(this.tipUp, new vec3(0, 0, 1))
+    xform.setWorldRotation(
+      orthogonalLookRotation(localFwd, localUp, horizontalTangent, vec3.up()),
+    )
   }
 
   private setTipEnabled(enabled: boolean): void {
@@ -727,4 +744,48 @@ function rotationFromTo(from: vec3, to: vec3): quat {
   const axis = f.cross(t).normalize()
   const angle = Math.acos(Math.max(-1, Math.min(1, d)))
   return quat.angleAxis(angle, axis)
+}
+
+/**
+ * Builds a rotation that maps `localFwd` onto `worldFwd` AND
+ * `localUp` onto `worldUp` (or onto the closest direction to
+ * `worldUp` that is orthogonal to `worldFwd`). Two-axis alignment
+ * removes the arbitrary roll that `rotationFromTo` would otherwise
+ * pick from the cross product, so an asymmetric tip mesh stays
+ * visually upright and its base sits orthogonal to world up
+ * regardless of which way the path turns.
+ */
+function orthogonalLookRotation(
+  localFwd: vec3,
+  localUp: vec3,
+  worldFwd: vec3,
+  worldUp: vec3,
+): quat {
+  const wf = safeNormalize(worldFwd, new vec3(0, 0, -1))
+  const q1 = rotationFromTo(localFwd, wf)
+
+  // After q1 the local-up axis lands somewhere on the unit sphere;
+  // we want to twist around `wf` so it points the same way as
+  // `worldUp`. Project both onto the plane perpendicular to `wf`
+  // and rotate the projected local-up onto the projected world-up.
+  const lu1 = q1.multiplyVec3(localUp)
+  const lu1p = safeNormalize(
+    lu1.sub(wf.uniformScale(lu1.dot(wf))),
+    new vec3(0, 1, 0),
+  )
+  const wupp = safeNormalize(
+    worldUp.sub(wf.uniformScale(worldUp.dot(wf))),
+    new vec3(0, 1, 0),
+  )
+
+  const dot = Math.max(-1, Math.min(1, lu1p.dot(wupp)))
+  if (dot > 0.999999) {
+    return q1
+  }
+  let angle = Math.acos(dot)
+  if (lu1p.cross(wupp).dot(wf) < 0) {
+    angle = -angle
+  }
+  const q2 = quat.angleAxis(angle, wf)
+  return q2.multiply(q1)
 }
