@@ -1319,7 +1319,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: -0.174402, y: 7.222994, z: -34.807930}
+    Position: {x: 0.000000, y: 7.222994, z: -34.807930}
     Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
@@ -2209,7 +2209,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: 0.000000, z: -34.807899}
+    Position: {x: 0.000000, y: -3.465998, z: -34.807899}
     Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.403638, y: 1.403638, z: 1.403638}
     HasSegmentScaleCompensation: false
