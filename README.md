@@ -17,7 +17,6 @@
 
 <br />
 
-<sub>Black · White · Yellow — a high-contrast look built for the road.</sub>
 
 </div>
 
@@ -58,22 +57,7 @@ Pair once, ride often. SpecsRider keeps your eyes on the road and your hands on 
 
 The iOS app owns routing, location, and music state. `SpectaclesBridge.swift` publishes topics that the lens-side `SpecsRiderBridge.ts` subscribes to. Feature scripts consume the bridge — they never open their own Mobile Kit sessions.
 
----
 
-## Brand palette
-
-SpecsRider uses a deliberate **black / white / yellow** system across the iOS app and in-lens UI.
-
-| Swatch | Name | Hex | Usage |
-|:------:|------|-----|-------|
-| ![#0A0A0A](https://via.placeholder.com/16/0A0A0A/0A0A0A.png) | **Specs Black** | `#0A0A0A` | App background, primary text on yellow buttons |
-| ![#141414](https://via.placeholder.com/16/141414/141414.png) | **Specs Surface** | `#141414` | Cards, fields, secondary surfaces |
-| ![#FFFFFF](https://via.placeholder.com/16/FFFFFF/FFFFFF.png) | **Specs White** | `#FFFFFF` | Primary copy, icons on dark surfaces |
-| ![#FFD400](https://via.placeholder.com/16/FFD400/FFD400.png) | **Specs Yellow** | `#FFD400` | Accent, CTAs, section headers, tab tint |
-
-Defined in [`App/SpecsRider/Theme/Theme.swift`](App/SpecsRider/Theme/Theme.swift).
-
----
 
 ## Repository layout
 
