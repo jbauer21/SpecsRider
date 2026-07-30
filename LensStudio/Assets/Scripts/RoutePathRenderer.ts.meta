@@ -27,13 +27,19 @@
   PackagePolicy: CanBeUnpacked
   ScriptInputsHidden:
     cameraObject: false
+    curveSmoothingEnabled: false
+    dashGapM: false
+    dashLengthM: false
     heightOffsetCm: false
     hideTipWhenInactive: false
     pathMaterial: false
     routeBeaconController: false
+    segmentedEnabled: false
+    subdivisionLengthCm: false
     tipForward: false
     tipHeightOffsetCm: false
     tipObject: false
+    tipUp: false
     tubeRadiusCm: false
     tubeSides: false
     verbose: false
@@ -56,8 +62,14 @@
       heightOffsetCm: !<float> -150.000000
       visibleBehindM: !<float> 1.000000
       visibleAheadM: !<float> 20.000000
+      segmentedEnabled: true
+      dashLengthM: !<float> 3.000000
+      dashGapM: !<float> 2.000000
+      curveSmoothingEnabled: true
+      subdivisionLengthCm: !<float> 40.000000
       tipObject: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       tipForward: !<Vec3> {x: 0.000000, y: 0.000000, z: -1.000000}
+      tipUp: !<Vec3> {x: 0.000000, y: 0.000000, z: 1.000000}
       tipHeightOffsetCm: !<float> 0.000000
       hideTipWhenInactive: true
       verbose: false
@@ -82,9 +94,19 @@
     - "// @input float visibleBehindM = 1 {\"hint\":\"How far behind the user's current path progress the line is still drawn (metres). 0 = the line ends exactly under the user.\", \"widget\":\"slider\", \"min\":0, \"max\":10, \"step\":0.1}"
     - "// @input float visibleAheadM = 20 {\"hint\":\"How far ahead of the user's current path progress the line is drawn (metres). The arrowhead 'tipObject' caps the line at this distance.\", \"widget\":\"slider\", \"min\":1, \"max\":100, \"step\":1}"
     - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Segmented rendering (Safety.md section 4)"}'
+    - '// @input bool segmentedEnabled = true {"hint":"If true, the visible line is drawn as separated dashes instead of one continuous ribbon, keeping the road visible between segments. The GuidancePresenter can override this per guidance mode."}'
+    - '// @input float dashLengthM = 3 {"hint":"Length of each drawn dash (metres) in segmented mode.", "widget":"slider", "min":0.5, "max":10, "step":0.5}'
+    - '// @input float dashGapM = 2 {"hint":"Gap between dashes (metres) in segmented mode.", "widget":"slider", "min":0.5, "max":10, "step":0.5}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"Curve smoothing"}'
+    - '// @input bool curveSmoothingEnabled = true {"hint":"If true, the visible slice is subdivided with a centripetal Catmull-Rom spline before meshing, so curved roads render as smooth arcs instead of straight chords between route samples."}'
+    - '// @input float subdivisionLengthCm = 40 {"hint":"Target spacing (world centimetres) between subdivided points on the smoothed curve. Smaller = rounder curves, more vertices per frame.", "widget":"slider", "min":10, "max":200, "step":5}'
+    - '// @ui {"widget":"separator"}'
     - '// @ui {"widget":"label", "label":"Arrow tip"}'
     - '// @input SceneObject tipObject {"hint":"Optional SceneObject placed at the leading edge of the visible line each frame, oriented along the path. Use any mesh you like; pass nothing to skip."}'
     - "// @input vec3 tipForward = {0,0,-1} {\"hint\":\"The tip's local-space forward direction, before this script drives its rotation. Lens Studio cones point along local +Y by default, so use (0,1,0) for a primitive cone. Use (0,0,-1) for a model that points along Lens Studio forward (-Z).\"}"
+    - "// @input vec3 tipUp = {0,0,1} {\"hint\":\"The tip's local-space up direction. Used together with tipForward to lock the tip's roll so it stays upright (its base sits orthogonal to world up) as the path direction changes. Must not be parallel to tipForward. For a Lens Studio cone with axis along +Y, any side direction works, e.g. (0,0,1).\"}"
     - "// @input float tipHeightOffsetCm {\"hint\":\"Vertical offset (world centimetres) applied to the tip's world position on top of the line's height offset. Useful if the tip mesh has its origin at its base / centre.\"}"
     - "// @input bool hideTipWhenInactive = true {\"hint\":\"If true, the tip is hidden when the route isn't ready, the user has arrived, or the visible window has zero length.\"}"
     - '// @ui {"widget":"separator"}'

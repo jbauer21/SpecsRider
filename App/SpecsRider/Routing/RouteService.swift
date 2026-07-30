@@ -1,5 +1,7 @@
 // Copyright © 2026 SpecsRider.
-// Resolves an address into a cycling route via MapKit and samples it every 25 m.
+// Resolves an address into a cycling route via MapKit, samples it every 25 m,
+// then (when enabled) snaps the samples onto OpenStreetMap road centerlines
+// for curve-accurate geometry.
 
 import Combine
 import CoreLocation
@@ -32,10 +34,22 @@ final class RouteService: ObservableObject {
     /// Default sampling spacing in meters.
     static let defaultSpacingMeters: CLLocationDistance = 25
 
+    /// When true, the MapKit polyline is snapped onto OpenStreetMap road
+    /// centerlines (fetched via Overpass, corridor tile by tile) so the
+    /// payload traces real curve geometry instead of 25 m chords. Any
+    /// failure in that pipeline silently falls back to the raw samples.
+    var osmSnappingEnabled: Bool = true
+
+    private let overpassClient = OverpassClient()
+    private let routeMatcher = RouteMatcher()
+
     @Published private(set) var current: RoutePayload?
     @Published private(set) var lastPolyline: MKPolyline?
     @Published private(set) var lastDestination: CLLocationCoordinate2D?
     @Published private(set) var isComputing: Bool = false
+    /// True when the most recent payload was OSM road-snapped (vs the raw
+    /// MapKit fallback). Surfaced for diagnostics/UI.
+    @Published private(set) var lastRouteWasSnapped: Bool = false
 
     /// Computes a cycling route from `origin` (or San Francisco as a sensible fallback) to the
     /// resolved destination of `address`, samples it every `spacing` meters, and stores the
@@ -63,13 +77,25 @@ final class RouteService: ObservableObject {
         let route = try await computeBicycleRoute(from: originCoord, to: destination)
         let polyline = route.polyline
         let samples = Self.samplePolyline(polyline, every: spacing)
-        let total = route.distance
+
+        // OSM road snapping: replace the coarse MapKit samples with true
+        // centerline geometry where possible. Never fatal — any failure
+        // (network, empty tiles, poor match) keeps the raw samples.
+        var points = samples
+        var snapped = false
+        if osmSnappingEnabled, let matched = await snapToRoads(samples: samples) {
+            points = matched
+            snapped = true
+        }
+        self.lastRouteWasSnapped = snapped
+
+        let total = points.last?.meters ?? route.distance
 
         let payload = RoutePayload(
             address: address,
             totalMeters: total,
             sampleSpacingMeters: spacing,
-            points: samples
+            points: points
         )
 
         self.current = payload
@@ -144,6 +170,37 @@ final class RouteService: ObservableObject {
         } catch {
             throw RoutingError.underlying(error)
         }
+    }
+
+    // MARK: - OSM road snapping
+
+    /// Runs the corridor-chunked OSM pipeline: split the sampled route into
+    /// ~400 m tiles, fetch road ways per tile via Overpass, build a spatial
+    /// road graph, then map-match the samples onto real centerlines.
+    /// Returns nil on any failure so the caller can fall back cleanly.
+    private func snapToRoads(samples: [RoutePoint]) async -> [RoutePoint]? {
+        guard let first = samples.first else { return nil }
+
+        let chunks = RouteChunk.corridorChunks(for: samples)
+        guard !chunks.isEmpty else { return nil }
+
+        let ways: [OverpassWay]
+        do {
+            ways = try await overpassClient.fetchRoadWays(for: chunks)
+        } catch {
+            // Overpass is a best-effort public service; log and move on.
+            print("[RouteService] OSM fetch failed, using raw MapKit samples: \(error.localizedDescription)")
+            return nil
+        }
+        guard !ways.isEmpty else { return nil }
+
+        let reference = CLLocationCoordinate2D(latitude: first.lat, longitude: first.lon)
+        let graph = RoadGraph(ways: ways, referencePoint: reference)
+        guard let matched = routeMatcher.match(samples: samples, graph: graph),
+              matched.count >= 2 else {
+            return nil
+        }
+        return matched
     }
 
     // MARK: - Polyline sampling

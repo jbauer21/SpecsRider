@@ -26,11 +26,14 @@
   ExportUid: 00000000-0000-0000-0000-000000000000
   PackagePolicy: CanBeUnpacked
   ScriptInputsHidden:
+    anchorTranslationTauS: false
+    anchorYawTauS: false
     beaconPrefab: false
     bridge: false
     cameraObject: false
     debugRefreshIntervalS: false
     debugText: false
+    enuAnchoringEnabled: false
     navigationDataComponent: false
     passDistanceMeters: false
     smoothingEnabled: false
@@ -52,6 +55,9 @@
       passDistanceMeters: !<float> 15.000000
       smoothingEnabled: true
       smoothingWindow: !<float> 30.000000
+      enuAnchoringEnabled: true
+      anchorTranslationTauS: !<float> 6.000000
+      anchorYawTauS: !<float> 12.000000
       verbose: false
       debugText: !<reference.Text> 00000000-0000-0000-0000-000000000000
       debugRefreshIntervalS: 0.250000
@@ -76,6 +82,11 @@
     - '// @ui {"widget":"label", "label":"Smoothing"}'
     - "// @input bool smoothingEnabled = true {\"hint\":\"If true, the destination beacon's world position is smoothed via a moving-average filter to suppress GPS / compass jitter.\"}"
     - '// @input float smoothingWindow = 30 {"hint":"Moving-average window length (in frames) for beacon position smoothing. ~30 = 0.5s at 60 FPS.", "widget":"slider", "min":1, "max":90, "step":1}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"label", "label":"ENU anchoring"}'
+    - '// @input bool enuAnchoringEnabled = true {"hint":"If true, exposes the route as a drift-free ENU polyline plus a continuously re-estimated ENU->world transform (fused from GPS + compass, low-pass filtered). RoutePathRenderer then re-anchors the line every frame instead of freezing the first GPS+compass fix."}'
+    - '// @input float anchorTranslationTauS = 6 {"hint":"Low-pass time constant (seconds) for the ENU->world translation. Larger = steadier line, slower convergence onto fresh GPS fixes.", "widget":"slider", "min":1, "max":30, "step":0.5}'
+    - '// @input float anchorYawTauS = 12 {"hint":"Low-pass time constant (seconds) for the ENU->world heading. Larger = steadier line, slower correction of compass error.", "widget":"slider", "min":1, "max":60, "step":0.5}'
     - '// @ui {"widget":"separator"}'
     - '// @ui {"widget":"label", "label":"Debug"}'
     - '// @input bool verbose {"hint":"If true, prints verbose route progress to the log."}'

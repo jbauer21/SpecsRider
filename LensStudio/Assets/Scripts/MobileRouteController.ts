@@ -19,6 +19,18 @@
  * provider interface (`isRouteReady`, `getDensePathWorldPositions`,
  * `getUserWorldPosition`, `getNextBeaconWorldPosition`).
  *
+ * ENU anchoring (drift fix): in addition to the legacy one-shot world
+ * conversion above, the controller maintains a local ENU frame whose
+ * origin is fixed at the first valid GPS fix. The route polyline is
+ * converted to ENU centimetres exactly once (`getDensePathEnuPositions`),
+ * and a *live*, low-pass-filtered ENU -> world similarity transform
+ * (`getEnuToWorldTransform`) is re-estimated continuously from the
+ * latest GPS fix + compass bearing vs the SLAM world pose. Consumers
+ * (see `RoutePathRenderer`) cache the drift-free ENU polyline and apply
+ * the current transform per frame, so heading / position errors at
+ * anchor time no longer freeze into the rendered path: the line keeps
+ * converging onto the road as fresher fixes arrive.
+ *
  * Hook-up:
  *   - `bridge`                 : the `SpecsRiderBridge` ScriptComponent.
  *   - `navigationDataComponent`: NavigationDataComponent (source of
@@ -56,6 +68,17 @@ interface RoutePayloadJson {
 }
 
 const WORLD_CM_PER_METER = 100
+const METERS_PER_DEGREE_LAT = 111132.0
+const EARTH_METERS_PER_DEGREE_LON_AT_EQUATOR = 111320.0
+
+/**
+ * Live ENU -> world similarity transform. World position of an ENU point
+ * `p` (in cm, y ignored) is `R_y(yawRad) * p + translation`.
+ */
+export type EnuToWorldTransform = {
+  yawRad: number
+  translation: vec3
+}
 
 type Waypoint = {
   lat: number
@@ -119,6 +142,22 @@ export class MobileRouteController extends BaseScriptComponent {
   public smoothingWindow: number = 30
 
   @ui.separator
+  @ui.label("ENU anchoring")
+  @input
+  @hint("If true, exposes the route as a drift-free ENU polyline plus a continuously re-estimated ENU->world transform (fused from GPS + compass, low-pass filtered). RoutePathRenderer then re-anchors the line every frame instead of freezing the first GPS+compass fix.")
+  public enuAnchoringEnabled: boolean = true
+
+  @input
+  @widget(new SliderWidget(1, 30, 0.5))
+  @hint("Low-pass time constant (seconds) for the ENU->world translation. Larger = steadier line, slower convergence onto fresh GPS fixes.")
+  public anchorTranslationTauS: number = 6
+
+  @input
+  @widget(new SliderWidget(1, 60, 0.5))
+  @hint("Low-pass time constant (seconds) for the ENU->world heading. Larger = steadier line, slower correction of compass error.")
+  public anchorYawTauS: number = 12
+
+  @ui.separator
   @ui.label("Debug")
   @input
   @hint("If true, prints verbose route progress to the log.")
@@ -148,6 +187,20 @@ export class MobileRouteController extends BaseScriptComponent {
   private endWaypoint: Waypoint | null = null
   private routeReady: boolean = false
   private beaconSpawnDisabled: boolean = false
+
+  // -- ENU frame. The origin is pinned at the first valid GPS fix and
+  // never moves; the route polyline is converted into this frame once
+  // per payload. The ENU->world transform below is what absorbs GPS /
+  // compass / SLAM drift over time.
+  private enuOrigin: LatLng | null = null
+  private enuCmPerDegreeLon: number = 0
+  private densePathEnu: vec3[] = []
+  // -- Filtered ENU->world transform state.
+  private anchorInitialized: boolean = false
+  private filteredYawRad: number = 0
+  private filteredTx: number = 0
+  private filteredTz: number = 0
+  private lastAnchorSampleTime: number = -1
 
   // -- Pending payload + rebuild flag. When a new payload arrives we
   // drop `routeReady` to false this frame and apply the payload on the
@@ -330,6 +383,10 @@ export class MobileRouteController extends BaseScriptComponent {
     }
 
     this.densePath = path
+    this.densePathEnu = []
+    if (this.enuOrigin !== null) {
+      this.buildDensePathEnu()
+    }
     this.destinationAddress =
       typeof payload.address === "string" ? payload.address : ""
     this.routeDistanceMeters =
@@ -388,6 +445,9 @@ export class MobileRouteController extends BaseScriptComponent {
       if (userGeo !== null) {
         this.lastUserGeo = userGeo
         this.lastGpsFixTime = getTime()
+        if (this.enuAnchoringEnabled) {
+          this.updateEnuAnchor(userGeo, event.getDeltaTime())
+        }
       }
     }
 
@@ -475,8 +535,130 @@ export class MobileRouteController extends BaseScriptComponent {
   private resetRouteState(): void {
     this.routeReady = false
     this.densePath = []
+    // The ENU origin and anchor filter intentionally survive route swaps:
+    // they describe the device's geo<->world relationship, not the route.
+    this.densePathEnu = []
     this.tearDownBeacon()
     this.beaconSpawnDisabled = false
+  }
+
+  // -----------------------------------------------------------------------
+  // ENU frame + live ENU->world transform
+  // -----------------------------------------------------------------------
+
+  /** Pins the ENU origin at the first valid GPS fix. Never moves after. */
+  private ensureEnuOrigin(userGeo: LatLng): void {
+    if (this.enuOrigin !== null) {
+      return
+    }
+    this.enuOrigin = {lat: userGeo.lat, lng: userGeo.lng}
+    this.enuCmPerDegreeLon =
+      EARTH_METERS_PER_DEGREE_LON_AT_EQUATOR *
+      Math.cos(userGeo.lat * (Math.PI / 180)) *
+      WORLD_CM_PER_METER
+    if (this.verbose) {
+      print(
+        "[MobileRoute] ENU origin pinned at " +
+          userGeo.lat.toFixed(6) +
+          ", " +
+          userGeo.lng.toFixed(6),
+      )
+    }
+  }
+
+  /**
+   * ENU coordinates in Lens Studio axis convention, centimetres:
+   * x = east, z = -north (so ENU north lines up with Lens Studio forward
+   * -Z at zero yaw), y = 0 (the transform supplies the height).
+   */
+  private latLngToEnuCm(p: LatLng): vec3 {
+    const origin = this.enuOrigin
+    if (origin === null) {
+      return vec3.zero()
+    }
+    const eastCm = (p.lng - origin.lng) * this.enuCmPerDegreeLon
+    const northCm = (p.lat - origin.lat) * METERS_PER_DEGREE_LAT * WORLD_CM_PER_METER
+    return new vec3(eastCm, 0, -northCm)
+  }
+
+  private buildDensePathEnu(): void {
+    if (this.enuOrigin === null || this.densePath.length === 0) {
+      return
+    }
+    const out: vec3[] = new Array(this.densePath.length)
+    for (let i = 0; i < this.densePath.length; i++) {
+      out[i] = this.latLngToEnuCm(this.densePath[i])
+    }
+    this.densePathEnu = out
+  }
+
+  /**
+   * Re-estimates the ENU->world transform from the latest GPS fix +
+   * compass bearing vs the current SLAM pose, then folds the sample into
+   * the low-pass-filtered state. Called once per frame while a fix is
+   * available, so the transform keeps converging instead of freezing the
+   * (noisy) first fix like the legacy one-shot anchor did.
+   *
+   * Yaw is filtered first and the translation target is computed against
+   * the *already filtered* yaw: with the user far from the ENU origin, a
+   * yaw/translation pair filtered independently would disagree by
+   * |userEnu| * deltaYaw right at the user's position, which is exactly
+   * where the line must be accurate.
+   */
+  private updateEnuAnchor(userGeo: LatLng, deltaTime: number): void {
+    if (this.userPosition === null) {
+      return
+    }
+    this.ensureEnuOrigin(userGeo)
+    if (this.densePath.length > 0 && this.densePathEnu.length === 0) {
+      this.buildDensePathEnu()
+    }
+
+    let userWorldPos: vec3
+    let userForward: vec3
+    let compassBearingRad: number
+    try {
+      const xform = this.userPosition.getRelativeTransform()
+      userWorldPos = xform.getWorldPosition()
+      userForward = xform.back.projectOnPlane(vec3.up())
+      compassBearingRad = this.userPosition.getBearing()
+    } catch (_e) {
+      return
+    }
+    if (userForward.length < 1e-4 || !isFinite(compassBearingRad)) {
+      return
+    }
+    userForward = userForward.normalize()
+
+    // Compass angle of the SLAM forward in world axes (north = -Z, east = +X).
+    const worldForwardAngle = Math.atan2(userForward.x, -userForward.z)
+    const yawTarget = compassBearingRad - worldForwardAngle
+
+    const userEnu = this.latLngToEnuCm(userGeo)
+
+    if (!this.anchorInitialized) {
+      this.filteredYawRad = normalizeAngle(yawTarget)
+      const rotated = rotateYXZ(userEnu, this.filteredYawRad)
+      this.filteredTx = userWorldPos.x - rotated.x
+      this.filteredTz = userWorldPos.z - rotated.z
+      this.anchorInitialized = true
+      this.lastAnchorSampleTime = getTime()
+      return
+    }
+
+    const kYaw = 1 - Math.exp(-Math.max(0, deltaTime) / Math.max(0.1, this.anchorYawTauS))
+    const kT = 1 - Math.exp(-Math.max(0, deltaTime) / Math.max(0.1, this.anchorTranslationTauS))
+
+    this.filteredYawRad = normalizeAngle(
+      this.filteredYawRad + angleDifference(yawTarget, this.filteredYawRad) * kYaw,
+    )
+
+    const rotated = rotateYXZ(userEnu, this.filteredYawRad)
+    const txTarget = userWorldPos.x - rotated.x
+    const tzTarget = userWorldPos.z - rotated.z
+    this.filteredTx += (txTarget - this.filteredTx) * kT
+    this.filteredTz += (tzTarget - this.filteredTz) * kT
+    this.lastAnchorSampleTime = getTime()
   }
 
   /**
@@ -585,6 +767,42 @@ export class MobileRouteController extends BaseScriptComponent {
       out.push(p)
     }
     return out
+  }
+
+  /**
+   * Drift-free route polyline in the fixed ENU frame (centimetres,
+   * x = east, z = -north, y = 0). Cache-safe: the values never change for
+   * a given route + ENU origin. Null until the route and the first GPS
+   * fix are both available, or when ENU anchoring is disabled.
+   */
+  public getDensePathEnuPositions(): vec3[] | null {
+    if (!this.enuAnchoringEnabled || !this.routeReady) {
+      return null
+    }
+    if (this.densePathEnu.length < 2) {
+      return null
+    }
+    return this.densePathEnu
+  }
+
+  /**
+   * Current low-pass-filtered ENU->world transform. The translation's Y is
+   * the camera's live eye-level world Y (matching the legacy conversion's
+   * vertical behaviour); consumers apply their own height offset on top.
+   * Null until the first anchor sample, or when ENU anchoring is disabled.
+   */
+  public getEnuToWorldTransform(): EnuToWorldTransform | null {
+    if (!this.enuAnchoringEnabled || !this.anchorInitialized) {
+      return null
+    }
+    if (isNull(this.cameraObject)) {
+      return null
+    }
+    const eyeY = this.cameraObject.getTransform().getWorldPosition().y
+    return {
+      yawRad: this.filteredYawRad,
+      translation: new vec3(this.filteredTx, eyeY, this.filteredTz),
+    }
   }
 
   /** Current world-space position of the user, or null if no GPS fix. */
@@ -700,6 +918,23 @@ export class MobileRouteController extends BaseScriptComponent {
     const beaconAlive = wp !== null && wp.sceneObject !== null ? "alive" : "off"
     lines.push("beacon: " + beaconAlive)
 
+    if (this.enuAnchoringEnabled) {
+      if (this.anchorInitialized) {
+        const age =
+          this.lastAnchorSampleTime >= 0 ? now - this.lastAnchorSampleTime : -1
+        lines.push(
+          "enu: yaw " +
+            ((this.filteredYawRad * 180) / Math.PI).toFixed(1) +
+            " deg | " +
+            this.densePathEnu.length +
+            " pts | sample " +
+            (age >= 0 ? age.toFixed(1) + "s ago" : "-"),
+        )
+      } else {
+        lines.push("enu: awaiting first anchor")
+      }
+    }
+
     this.debugText.text = lines.join("\n")
   }
 }
@@ -753,6 +988,30 @@ function toValidLatLng(geo: any): LatLng | null {
     return null
   }
   return {lat, lng}
+}
+
+/** Rotates `v` around world +Y by `yawRad` (same convention as quat.fromEulerAngles(0, yaw, 0)). */
+function rotateYXZ(v: vec3, yawRad: number): vec3 {
+  const c = Math.cos(yawRad)
+  const s = Math.sin(yawRad)
+  return new vec3(v.x * c + v.z * s, v.y, -v.x * s + v.z * c)
+}
+
+/** Wraps an angle into (-pi, pi]. */
+function normalizeAngle(a: number): number {
+  let out = a
+  while (out > Math.PI) {
+    out -= 2 * Math.PI
+  }
+  while (out <= -Math.PI) {
+    out += 2 * Math.PI
+  }
+  return out
+}
+
+/** Signed smallest difference `a - b`, wrapped into (-pi, pi]. */
+function angleDifference(a: number, b: number): number {
+  return normalizeAngle(a - b)
 }
 
 function truncate(s: string, max: number): string {

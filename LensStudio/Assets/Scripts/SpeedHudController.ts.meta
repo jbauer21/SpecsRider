@@ -30,6 +30,7 @@
     minDisplaySpeedKmh: false
     outputSmoothAlpha: false
     pollIntervalS: false
+    speedProvider: false
     speedText: false
     staleTimeoutS: false
     useMph: false
@@ -43,6 +44,7 @@
     []
   DefaultScriptInputs:
     - speedText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      speedProvider: !<reference.ScriptComponent> 00000000-0000-0000-0000-000000000000
       useMph: false
       pollIntervalS: 0.500000
       outputSmoothAlpha: 0.250000
@@ -54,6 +56,7 @@
       {}
   InputLines:
     - '// @input Component.Text speedText {"hint":"Text component on the HUD that will display the current speed."}'
+    - '// @input Component.ScriptComponent speedProvider {"hint":"Optional shared SpeedProvider (safety system). When assigned, the HUD displays its speed instead of measuring locally, so HUD and safety logic always agree."}'
     - '// @ui {"widget":"separator"}'
     - '// @ui {"widget":"label", "label":"Units"}'
     - '// @input bool useMph {"label":"Use mph", "hint":"When enabled, the HUD shows miles per hour. When disabled, it shows kilometers per hour."}'

@@ -45,21 +45,37 @@
  *                               window. Pass `null` to skip.
  *
  * Notes:
- *   - The cached path is anchored at first build using GPS + compass.
- *     Subsequent frames keep using that anchor; world tracking is what
- *     makes the line stick to the world. There is no automatic
- *     re-anchoring (we never recompute the cached vertices), so the
- *     `userArcCm` progress stays consistent across frames.
- *   - For seamless trimming, the controller's path sample spacing
- *     should stay small (the iOS bridge sends ~2 m). The visible
- *     window's start and end are linearly interpolated between dense
- *     vertices, so even a long tube transitions smoothly.
+ *   - Anchoring runs in one of two modes:
+ *       ENU mode (preferred): when the provider exposes
+ *       `getDensePathEnuPositions()` + `getEnuToWorldTransform()`, the
+ *       renderer caches the drift-free ENU polyline (plus its arc-length
+ *       table, which is invariant under rigid transforms) and applies the
+ *       provider's *live*, low-pass-filtered ENU->world transform to the
+ *       visible slice every frame. The line therefore keeps converging
+ *       onto the road as fresh GPS/compass fixes arrive instead of
+ *       freezing the first anchor.
+ *       Legacy mode: the world-space path is cached once at first build
+ *       using a single GPS + compass fix and never re-anchored.
+ *   - The iOS bridge sends curvature-adaptive spacing (roughly 2-15 m);
+ *     the optional Catmull-Rom smoothing pass below subdivides the
+ *     visible slice so curves render smoothly regardless of the incoming
+ *     sample spacing. The visible window's start and end are linearly
+ *     interpolated between dense vertices, so even a long tube
+ *     transitions smoothly.
  */
+
+type EnuToWorldTransformLike = {
+  yawRad: number
+  translation: vec3
+}
 
 interface RoutePathProviderLike {
   isRouteReady(): boolean
   getDensePathWorldPositions(): vec3[] | null
   getUserWorldPosition(): vec3 | null
+  // Optional ENU anchoring API (see MobileRouteController).
+  getDensePathEnuPositions?(): vec3[] | null
+  getEnuToWorldTransform?(): EnuToWorldTransformLike | null
 }
 
 const WORLD_CM_PER_METER = 100
@@ -111,6 +127,17 @@ export class RoutePathRenderer extends BaseScriptComponent {
   public visibleAheadM: number = 20
 
   @ui.separator
+  @ui.label("Curve smoothing")
+  @input
+  @hint("If true, the visible slice is subdivided with a centripetal Catmull-Rom spline before meshing, so curved roads render as smooth arcs instead of straight chords between route samples.")
+  public curveSmoothingEnabled: boolean = true
+
+  @input
+  @widget(new SliderWidget(10, 200, 5))
+  @hint("Target spacing (world centimetres) between subdivided points on the smoothed curve. Smaller = rounder curves, more vertices per frame.")
+  public subdivisionLengthCm: number = 40
+
+  @ui.separator
   @ui.label("Arrow tip")
   @input
   @allowUndefined
@@ -141,9 +168,17 @@ export class RoutePathRenderer extends BaseScriptComponent {
   // --- Cached path data (built once on first ready frame) -----------------
   private provider: RoutePathProviderLike | null = null
   private materialInstance: Material | null = null
+  // In ENU mode this holds the drift-free ENU polyline (y = 0, transform
+  // applied per frame); in legacy mode it holds frozen world positions
+  // with `heightOffsetCm` baked in.
   private worldPath: vec3[] = []
+  // True when the provider exposes the ENU anchoring API and the path was
+  // cached in the ENU frame.
+  private enuMode: boolean = false
   // cumulativeArcCm[i] is the arc length (in cm) from worldPath[0] to
-  // worldPath[i] along the polyline. cumulativeArcCm[0] = 0.
+  // worldPath[i] along the polyline. cumulativeArcCm[0] = 0. Arc length is
+  // invariant under the rigid ENU->world transform, so the table is valid
+  // in both modes.
   private cumulativeArcCm: number[] = []
   private totalArcCm: number = 0
 
@@ -231,10 +266,23 @@ export class RoutePathRenderer extends BaseScriptComponent {
       return
     }
 
-    const userPos = this.getUserWorldPos()
-    if (userPos === null) {
+    // In ENU mode, fetch the provider's current (filtered) transform once
+    // per frame; both the user projection and the rendered slice use it.
+    let enuXf: EnuToWorldTransformLike | null = null
+    if (this.enuMode) {
+      enuXf = this.provider.getEnuToWorldTransform!()
+      if (enuXf === null) {
+        return
+      }
+    }
+
+    const userWorldPos = this.getUserWorldPos()
+    if (userWorldPos === null) {
       return
     }
+    // Project progress in the same frame the path is cached in.
+    const userPos =
+      this.enuMode && enuXf !== null ? worldToEnu(userWorldPos, enuXf) : userWorldPos
 
     this.advanceUserArc(userPos)
 
@@ -257,8 +305,21 @@ export class RoutePathRenderer extends BaseScriptComponent {
       return
     }
 
-    this.rebuildTube(trimmed)
-    this.updateTip(trimmed, endArcCm < this.totalArcCm)
+    // ENU -> world for the visible slice (legacy mode is already world).
+    let renderPath = trimmed
+    if (this.enuMode && enuXf !== null) {
+      renderPath = new Array(trimmed.length)
+      for (let i = 0; i < trimmed.length; i++) {
+        renderPath[i] = enuToWorld(trimmed[i], enuXf, this.heightOffsetCm)
+      }
+    }
+
+    if (this.curveSmoothingEnabled && renderPath.length >= 3) {
+      renderPath = catmullRomSubdivide(renderPath, Math.max(5, this.subdivisionLengthCm))
+    }
+
+    this.rebuildTube(renderPath)
+    this.updateTip(renderPath, endArcCm < this.totalArcCm)
   }
 
   // -----------------------------------------------------------------------
@@ -266,14 +327,33 @@ export class RoutePathRenderer extends BaseScriptComponent {
   // -----------------------------------------------------------------------
 
   /**
-   * Pulls the dense polyline from the controller, applies the height
-   * offset, computes the cumulative arc-length table, and creates the
-   * shared `MeshBuilder` + line SceneObject. Returns true once cached.
+   * Pulls the dense polyline from the controller, computes the cumulative
+   * arc-length table, and creates the shared `MeshBuilder` + line
+   * SceneObject. Returns true once cached.
+   *
+   * Prefers the provider's ENU API: the cached polyline is then the
+   * drift-free ENU path (y = 0; the live transform + `heightOffsetCm`
+   * are applied per frame). Falls back to the legacy one-shot world
+   * conversion (height offset baked in) when the ENU API is unavailable.
    */
   private cachePath(): boolean {
     if (this.provider === null) {
       return false
     }
+
+    if (
+      typeof this.provider.getDensePathEnuPositions === "function" &&
+      typeof this.provider.getEnuToWorldTransform === "function"
+    ) {
+      const enuPath = this.provider.getDensePathEnuPositions()
+      const enuXf = this.provider.getEnuToWorldTransform()
+      if (enuPath !== null && enuPath.length >= 2 && enuXf !== null) {
+        this.worldPath = enuPath
+        this.enuMode = true
+        return this.finishCachePath()
+      }
+    }
+
     const raw = this.provider.getDensePathWorldPositions()
     if (raw === null || raw.length < 2) {
       return false
@@ -285,6 +365,13 @@ export class RoutePathRenderer extends BaseScriptComponent {
       path[i] = new vec3(p.x, p.y + this.heightOffsetCm, p.z)
     }
     this.worldPath = path
+    this.enuMode = false
+    return this.finishCachePath()
+  }
+
+  /** Shared tail of `cachePath`: arc table + mesh scaffold + logging. */
+  private finishCachePath(): boolean {
+    const path = this.worldPath
 
     const arc: number[] = new Array(path.length)
     arc[0] = 0
@@ -305,7 +392,9 @@ export class RoutePathRenderer extends BaseScriptComponent {
       print(
         "[RoutePathRenderer] Cached " +
           path.length +
-          " path samples, total arc " +
+          " path samples (" +
+          (this.enuMode ? "ENU" : "legacy world") +
+          " mode), total arc " +
           (this.totalArcCm / WORLD_CM_PER_METER).toFixed(1) +
           " m.",
       )
@@ -535,6 +624,7 @@ export class RoutePathRenderer extends BaseScriptComponent {
    */
   private resetCachedPath(): void {
     this.worldPath = []
+    this.enuMode = false
     this.cumulativeArcCm = []
     this.totalArcCm = 0
     this.userArcCm = 0
@@ -704,6 +794,90 @@ export class RoutePathRenderer extends BaseScriptComponent {
       this.tipObject.enabled = true
     }
   }
+}
+
+/**
+ * Applies the ENU->world transform to an ENU point (cm):
+ * `world = R_y(yaw) * p + T`, plus the renderer's floor offset. ENU path
+ * points have y = 0, so the vertical comes entirely from the transform's
+ * translation (camera eye level) + `heightOffsetCm`.
+ */
+function enuToWorld(p: vec3, xf: EnuToWorldTransformLike, heightOffsetCm: number): vec3 {
+  const c = Math.cos(xf.yawRad)
+  const s = Math.sin(xf.yawRad)
+  return new vec3(
+    p.x * c + p.z * s + xf.translation.x,
+    xf.translation.y + p.y + heightOffsetCm,
+    -p.x * s + p.z * c + xf.translation.z,
+  )
+}
+
+/**
+ * Inverse of `enuToWorld` (ignoring height): brings a world position into
+ * the ENU frame so user progress can be projected onto the cached ENU
+ * polyline. Y is zeroed because the ENU path is flat; this keeps the
+ * closest-segment projection purely horizontal.
+ */
+function worldToEnu(w: vec3, xf: EnuToWorldTransformLike): vec3 {
+  const c = Math.cos(xf.yawRad)
+  const s = Math.sin(xf.yawRad)
+  const dx = w.x - xf.translation.x
+  const dz = w.z - xf.translation.z
+  return new vec3(dx * c - dz * s, 0, dx * s + dz * c)
+}
+
+/**
+ * Subdivides a polyline with a centripetal Catmull-Rom spline so segments
+ * render as smooth arcs. Centripetal parameterisation (alpha = 0.5) never
+ * produces loops or overshoot even with the uneven 2-15 m sample spacing
+ * the iOS bridge sends. Each source segment is split into
+ * `ceil(len / targetStepCm)` pieces (capped to keep per-frame vertex
+ * counts bounded). Endpoints are preserved exactly, which matters because
+ * the slice's first/last points are the interpolated visible-window edges.
+ */
+function catmullRomSubdivide(points: vec3[], targetStepCm: number): vec3[] {
+  const n = points.length
+  if (n < 3) {
+    return points
+  }
+  const out: vec3[] = [points[0]]
+  for (let i = 0; i < n - 1; i++) {
+    const p0 = points[Math.max(0, i - 1)]
+    const p1 = points[i]
+    const p2 = points[i + 1]
+    const p3 = points[Math.min(n - 1, i + 2)]
+    const segLen = p1.distance(p2)
+    if (segLen < 1e-3) {
+      continue
+    }
+    const divisions = Math.max(1, Math.min(24, Math.ceil(segLen / targetStepCm)))
+    for (let d = 1; d < divisions; d++) {
+      out.push(catmullRomCentripetal(p0, p1, p2, p3, d / divisions))
+    }
+    out.push(p2)
+  }
+  return out
+}
+
+/**
+ * Evaluates the centripetal Catmull-Rom spline through p1..p2 at
+ * `t` in [0, 1]. Degenerate knot intervals (duplicated points) fall back
+ * to linear interpolation.
+ */
+function catmullRomCentripetal(p0: vec3, p1: vec3, p2: vec3, p3: vec3, t: number): vec3 {
+  const eps = 1e-4
+  const t0 = 0
+  const t1 = t0 + Math.max(eps, Math.sqrt(p0.distance(p1)))
+  const t2 = t1 + Math.max(eps, Math.sqrt(p1.distance(p2)))
+  const t3 = t2 + Math.max(eps, Math.sqrt(p2.distance(p3)))
+  const tt = t1 + (t2 - t1) * t
+
+  const a1 = lerpVec3(p0, p1, (tt - t0) / (t1 - t0))
+  const a2 = lerpVec3(p1, p2, (tt - t1) / (t2 - t1))
+  const a3 = lerpVec3(p2, p3, (tt - t2) / (t3 - t2))
+  const b1 = lerpVec3(a1, a2, (tt - t0) / (t2 - t0))
+  const b2 = lerpVec3(a2, a3, (tt - t1) / (t3 - t1))
+  return lerpVec3(b1, b2, (tt - t1) / (t2 - t1))
 }
 
 function safeNormalize(v: vec3, fallback: vec3): vec3 {

@@ -15,6 +15,7 @@
     - !<own> 9999dc27-7b6e-4642-9083-bc98da29d2af
     - !<own> 2e4b4c94-cd97-4d64-9aae-2bd5d16fd562
     - !<own> d964d7ff-53e5-4435-bb84-a73bb279839e
+    - !<own> 09f9c76d-940e-4cf2-a46b-b81abac3cf8f
   layers: !<Layers/267ee9a7-aff2-4f9d-9a49-f71214747d03>
     userLayers:
       []
@@ -38,6 +39,7 @@
     - !<own> 4d539f41-c44e-4c71-adf9-2156c591c6e4
     - !<own> 84ae5bb4-b926-49d2-a6f9-ae15e1c2724d
     - !<own> 82a62d03-0b82-4110-a11d-54b9b668c2b7
+    - !<own> 4543e5b3-eaa4-4e44-8a94-c97ba54340a0
   Components:
     - !<own> 00000000-0000-0065-0000-000000000065
     - !<own> e5553c8a-0b7e-4ef4-92d9-3e1318fb82c1
@@ -215,6 +217,28 @@
     []
   Components:
     - !<own> bb14d27b-8507-4790-93ec-d2ac4b5f4cad
+- !<ScriptComponent/025c095a-9471-48de-bb5d-22df39d7116d>
+  PrefabRemaps:
+    []
+  Name: InteractionGate
+  Enabled: true
+  ScriptAsset: !<reference> bcdd07be-db6e-4964-a8a2-0656376800b0
+  ScriptInputsDefault:
+    extraGatedObjects: true
+    verbose: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      stateMachine: !<reference.ScriptComponent> 6db6f13c-07fa-4285-8cbe-29f54f60c6ce
+      palmMenuAnchor: !<reference.ScriptComponent> 5b82bd01-8e43-44a4-9d59-e6185c9567db
+      extraGatedObjects: !<reference.SceneObject[]>
+        []
+      suppressToggleButton: !<reference.ScriptComponent> 87ef6b2c-f50e-4943-ae91-3243dd0325f5
+      verbose: false
+  ScriptTypes:
+    "":
+      {}
 - !<SceneObject/031abae4-7029-4da6-89ec-08d2369c519f>
   PrefabRemaps:
     []
@@ -263,8 +287,68 @@
     - !<own> ad990a92-146e-4087-9e51-42f13fc62f35
     - !<own> 15b86f83-03f1-4e84-a0c1-ba7885343ab7
     - !<own> 1632c2d6-b5c5-46f0-b2d7-2743e98b8862
+    - !<own> 8b46e6a0-dada-487e-baee-40f0baa1a06c
   Components:
     []
+- !<SceneObject/09f9c76d-940e-4cf2-a46b-b81abac3cf8f>
+  PrefabRemaps:
+    []
+  Name: SafetySystem
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> e81890bf-bef4-40b3-8672-9a55a9ff25f2
+    - !<own> d2f6c7e0-856b-4695-8ac7-38c69c8a5da4
+    - !<own> d8ffb1b7-e6f5-434b-b1e1-55d12385fee2
+    - !<own> 6db6f13c-07fa-4285-8cbe-29f54f60c6ce
+    - !<own> 71d6b576-3943-4ca3-964f-cf87c334e492
+    - !<own> 0b4d7123-75bb-4597-989a-e9590bb07df0
+    - !<own> 025c095a-9471-48de-bb5d-22df39d7116d
+    - !<own> cc4bc773-40e4-413d-8146-c2ce1d3c734a
+    - !<own> 7225973e-8f4c-4444-9274-9fbee4ebec84
+- !<ScriptComponent/0b4d7123-75bb-4597-989a-e9590bb07df0>
+  PrefabRemaps:
+    []
+  Name: GuidancePresenter
+  Enabled: true
+  ScriptAsset: !<reference> 83974b08-ca60-4822-bcab-c2bb9ac0e5ab
+  ScriptInputsDefault:
+    worldPathSegmented: true
+    speedAheadFactorMPerKmh: true
+    maxAheadM: true
+    corridorRadiusScale: true
+    corridorAheadScale: true
+    corridorOpacity: true
+    verbose: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      stateMachine: !<reference.ScriptComponent> 6db6f13c-07fa-4285-8cbe-29f54f60c6ce
+      confidenceMonitor: !<reference.ScriptComponent> d2f6c7e0-856b-4695-8ac7-38c69c8a5da4
+      speedProvider: !<reference.ScriptComponent> e81890bf-bef4-40b3-8672-9a55a9ff25f2
+      routePathRenderer: !<reference.ScriptComponent> bbe0b5e8-b2fb-4013-867e-a1b7ed0f2702
+      nextBeaconArrow: !<reference.ScriptComponent> d6f84e28-6731-4041-919c-c955102486e7
+      routeController: !<reference.ScriptComponent> 8e53bcf2-faf3-425f-90de-7d63be4fe9ce
+      audioCueController: !<reference.ScriptComponent> 71d6b576-3943-4ca3-964f-cf87c334e492
+      telemetryLogger: !<reference.ScriptComponent> d8ffb1b7-e6f5-434b-b1e1-55d12385fee2
+      worldPathSegmented: true
+      speedAheadFactorMPerKmh: 0.600000
+      maxAheadM: !<float> 45.000000
+      corridorRadiusScale: !<float> 3.000000
+      corridorAheadScale: 0.600000
+      corridorOpacity: 0.550000
+      verbose: false
+  ScriptTypes:
+    "":
+      {}
 - !<ScriptComponent/0d30259e-afe7-4f22-a1cd-b77eea85e093>
   PrefabRemaps:
     []
@@ -502,6 +586,21 @@
   ScriptTypes:
     "":
       {}
+- !<SceneObject/1768e3e7-04a3-4eaa-b7d8-54568c8397ff>
+  PrefabRemaps:
+    []
+  Name: Image
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.028502, z: 0.099998}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 2.949901, y: 2.949901, z: 1.474950}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> afdb3e8d-3e49-4b76-adbd-2db92bda445a
 - !<SceneObject/18c6646c-d787-40eb-b594-cb83f8a4ee95>
   PrefabRemaps:
     []
@@ -1277,6 +1376,21 @@
     []
   Components:
     - !<own> 55be292f-0363-41f1-b55c-70fcb8e4dd25
+- !<SceneObject/4543e5b3-eaa4-4e44-8a94-c97ba54340a0>
+  PrefabRemaps:
+    []
+  Name: SafetyPromptCard
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 2.000000, z: -34.799999}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 52483f48-cffc-4ad2-a5ba-461537a468c3
 - !<SceneObject/4a8fba8e-5e79-4c17-9b90-eecc02c7b7dc>
   PrefabRemaps:
     []
@@ -1372,6 +1486,87 @@
     - !<own> 974e2072-cd2a-4664-8d91-d71bbcd60d54
   Components:
     []
+- !<Text/52483f48-cffc-4ad2-a5ba-461537a468c3>
+  PrefabRemaps:
+    []
+  Name: Text
+  Enabled: true
+  RenderOrder: 0
+  StretchMode: Stretch
+  VerticalAlignment: Center
+  HorizontalAlignment: Center
+  MeshShadowMode: None
+  ShadowColor: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+  ShadowDensity: 1.000000
+  Text: ""
+  Editable: false
+  ShowEditingPreview: true
+  TouchHandler: !<reference> 00000000-0000-0000-0000-000000000000
+  SizeToFit: false
+  FontSize: 26
+  Font: !<reference> 00000000-0000-0000-0000-000000000000
+  LayoutRect:
+    left: -7.500000
+    bottom: -2.250000
+    right: 7.500000
+    top: 2.250000
+  OverflowVertical: Overflow
+  OverflowHorizontal: Overflow
+  Fill: !<TextFill>
+    Mode: Solid
+    Color: {x: 1.000000, y: 0.750000, z: 0.150000, w: 1.000000}
+    Texture: !<reference> 00000000-0000-0000-0000-000000000000
+    ColorTint: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+    TileCount: 5.000000
+    TileZone: Rect
+    TextureStretch: FitWidth
+  BlendMode: PremultipliedAlpha
+  Outline: !<OutlineSettings>
+    Enabled: false
+    Fill: !<TextFill>
+      Mode: Solid
+      Color: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}
+      Texture: !<reference> 00000000-0000-0000-0000-000000000000
+      ColorTint: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+      TileCount: 5.000000
+      TileZone: Rect
+      TextureStretch: FitWidth
+    Size: 0.250000
+  Dropshadow: !<DropshadowSettings>
+    Enabled: false
+    Fill: !<TextFill>
+      Mode: Solid
+      Color: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}
+      Texture: !<reference> 00000000-0000-0000-0000-000000000000
+      ColorTint: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+      TileCount: 5.000000
+      TileZone: Rect
+      TextureStretch: FitWidth
+    OffsetX: 0.250000
+    OffsetY: 0.250000
+  Background: !<BackgroundSettings>
+    Enabled: false
+    Fill: !<TextFill>
+      Mode: Solid
+      Color: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}
+      Texture: !<reference> 00000000-0000-0000-0000-000000000000
+      ColorTint: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+      TileCount: 5.000000
+      TileZone: Rect
+      TextureStretch: FitWidth
+    Margins:
+      left: 0.000000
+      bottom: 0.000000
+      right: 0.000000
+      top: 0.000000
+    CornerRadius: 0.000000
+  AdvancedLayout: !<TextAdvancedLayout>
+    ExtentsTarget: !<reference> 00000000-0000-0000-0000-000000000000
+    LetterSpacing: 0.000000
+    LineSpacing: 1.000000
+    CapitalizationOverride: None
+  DepthTest: false
+  TwoSided: false
 - !<SceneObject/541a1667-fb17-43bf-bd3b-7b713063d3f7>
   PrefabRemaps:
     []
@@ -1881,6 +2076,35 @@
   BlendNormals: false
   BlendShapes:
     {}
+- !<ScriptComponent/6db6f13c-07fa-4285-8cbe-29f54f60c6ce>
+  PrefabRemaps:
+    []
+  Name: SafetyStateMachine
+  Enabled: true
+  ScriptAsset: !<reference> be4d73c3-184e-467a-9b04-7aed81dd36e3
+  ScriptInputsDefault:
+    revalidationDwellS: true
+    lowBatteryPct: true
+    deviceStatusStaleS: true
+    improveDwellS: true
+    verbose: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      confidenceMonitor: !<reference.ScriptComponent> d2f6c7e0-856b-4695-8ac7-38c69c8a5da4
+      speedProvider: !<reference.ScriptComponent> e81890bf-bef4-40b3-8672-9a55a9ff25f2
+      bridge: !<reference.ScriptComponent> 1699c615-fd6d-4a20-a849-e7407518b641
+      telemetryLogger: !<reference.ScriptComponent> d8ffb1b7-e6f5-434b-b1e1-55d12385fee2
+      revalidationDwellS: !<float> 4.000000
+      lowBatteryPct: !<float> 20.000000
+      deviceStatusStaleS: !<float> 120.000000
+      improveDwellS: !<float> 1.000000
+      verbose: false
+      debugText: !<reference.Text> c8d33352-ae6b-4f39-b546-7ece83c7a53b
+  ScriptTypes:
+    "":
+      {}
 - !<SceneObject/6dc5dd7a-4726-4cb6-b42f-a12f4b6416c3>
   PrefabRemaps:
     []
@@ -1912,6 +2136,26 @@
   ScriptTypes:
     "":
       {}
+- !<ScriptComponent/71d6b576-3943-4ca3-964f-cf87c334e492>
+  PrefabRemaps:
+    []
+  Name: AudioCueController
+  Enabled: true
+  ScriptAsset: !<reference> 15ddaac4-6c38-4509-8581-c7584414688f
+  ScriptInputsDefault:
+    volume: true
+    cooldownS: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      guidanceCueTrack: !<reference.AudioTrackAsset> 4baf3db1-04bf-4c30-8657-65bd6f49da9d
+      warningCueTrack: !<reference.AudioTrackAsset> 1e7a9880-a0be-4e61-98ca-83333c177067
+      volume: 0.800000
+      cooldownS: !<float> 3.000000
+  ScriptTypes:
+    "":
+      {}
 - !<SceneObject/71dbdbcb-fedd-46c0-adcb-e1f2e8b92f5d>
   PrefabRemaps:
     []
@@ -1927,6 +2171,29 @@
     []
   Components:
     - !<own> 6cac85a8-f502-4056-881b-db428723681c
+- !<ScriptComponent/7225973e-8f4c-4444-9274-9fbee4ebec84>
+  PrefabRemaps:
+    []
+  Name: SafetyPrompt
+  Enabled: true
+  ScriptAsset: !<reference> ed4352d5-84ea-4d84-9c99-b8b2d737e6b0
+  ScriptInputsDefault:
+    failureMessage: true
+    relocalizeMessage: true
+    refreshIntervalS: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      stateMachine: !<reference.ScriptComponent> 6db6f13c-07fa-4285-8cbe-29f54f60c6ce
+      promptObject: !<reference.SceneObject> 4543e5b3-eaa4-4e44-8a94-c97ba54340a0
+      promptText: !<reference.Text> 52483f48-cffc-4ad2-a5ba-461537a468c3
+      failureMessage: Navigation error.nAR guidance is off. Stop safely.
+      relocalizeMessage: Tracking lost.nStop in a safe place.nGuidance returns when location is verified.
+      refreshIntervalS: 0.250000
+  ScriptTypes:
+    "":
+      {}
 - !<SceneObject/73b7e3d8-b7f3-4c24-9f65-4ecfc6871b0d>
   PrefabRemaps:
     []
@@ -2247,6 +2514,50 @@
     - !<own> 142d82e8-0b31-4ba5-bd6f-e1d5a4ffd060
   Components:
     []
+- !<ScriptComponent/87ef6b2c-f50e-4943-ae91-3243dd0325f5>
+  PrefabRemaps:
+    []
+  Name: RectangleButton
+  Enabled: true
+  ScriptAsset: !<reference> 173d7099-914c-4f24-ac1c-1b67a66ae138
+  ScriptInputsDefault:
+    _renderOrder: true
+    _inactive: true
+    _playAudio: true
+    _hasShadow: true
+    _shadowPositionOffset: true
+    _toggleable: true
+    _defaultToOn: true
+    addCallbacks: true
+    triggerUpCallbacks: true
+    triggerDownCallbacks: true
+    onValueChangeCallbacks: true
+    onFinishedCallbacks: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      _renderOrder: 0
+      _size: !<Vec3> {x: 3.000000, y: 3.000000, z: 3.000000}
+      _inactive: false
+      _playAudio: false
+      _style: Special
+      _hasShadow: false
+      _shadowPositionOffset: !<Vec3> {x: 0.050000, y: -0.050000, z: -0.010000}
+      _toggleable: false
+      _defaultToOn: false
+      addCallbacks: false
+      triggerUpCallbacks:
+        []
+      triggerDownCallbacks:
+        []
+      onValueChangeCallbacks:
+        []
+      onFinishedCallbacks:
+        []
+  ScriptTypes:
+    "":
+      {}
 - !<SceneObject/8b1597e7-0f83-4295-a17b-d12cd299f954>
   PrefabRemaps:
     []
@@ -2262,6 +2573,24 @@
     - !<own> fe66bb72-6c90-42c5-bc72-2915d91b4804
   Components:
     []
+- !<SceneObject/8b46e6a0-dada-487e-baee-40f0baa1a06c>
+  PrefabRemaps:
+    - 1768e3e7-04a3-4eaa-b7d8-54568c8397ff: db864598-8def-43c2-6190-0bcaebce4f90
+    - 35c9d860-acc9-4523-b005-5f32775ee868: e491bf26-c9f6-4e19-590a-d7f3e7574dc9
+    - 87ef6b2c-f50e-4943-ae91-3243dd0325f5: ed0b3675-0d71-48b2-4198-130a98b5c91d
+    - 8b46e6a0-dada-487e-baee-40f0baa1a06c: 83695f28-fe87-4390-4870-336387b319f1
+  Name: HideNavButton
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: -9.500000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> 1768e3e7-04a3-4eaa-b7d8-54568c8397ff
+  Components:
+    - !<own> 87ef6b2c-f50e-4943-ae91-3243dd0325f5
 - !<SceneObject/8cdd4c87-6054-4626-9717-2c37ae231599>
   PrefabRemaps:
     []
@@ -2287,6 +2616,9 @@
     passDistanceMeters: true
     smoothingEnabled: true
     smoothingWindow: true
+    enuAnchoringEnabled: true
+    anchorTranslationTauS: true
+    anchorYawTauS: true
     verbose: true
     debugText: true
     debugRefreshIntervalS: true
@@ -2301,6 +2633,9 @@
       passDistanceMeters: !<float> 15.000000
       smoothingEnabled: true
       smoothingWindow: !<float> 30.000000
+      enuAnchoringEnabled: true
+      anchorTranslationTauS: !<float> 6.000000
+      anchorYawTauS: !<float> 12.000000
       verbose: false
       debugText: !<reference.Text> 00000000-0000-0000-0000-000000000000
       debugRefreshIntervalS: 0.250000
@@ -2649,6 +2984,25 @@
     - !<own> 9c6bdaf8-6f75-4c15-8f87-51a47efb49e9
   Components:
     []
+- !<Image/afdb3e8d-3e49-4b76-adbd-2db92bda445a>
+  PrefabRemaps:
+    []
+  Name: Image
+  Enabled: true
+  RenderOrder: 0
+  StretchMode: Fit
+  VerticalAlignment: Center
+  HorizontalAlignment: Center
+  MeshShadowMode: None
+  ShadowColor: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+  ShadowDensity: 1.000000
+  Materials:
+    - !<reference> 0cc8c992-bea9-4458-9c8f-0a5c2bb073af
+  FlipX: false
+  FlipY: false
+  RotationAngle: 0
+  Pivot: {x: 0.000000, y: 0.000000}
+  ExtentsTarget: !<reference> 00000000-0000-0000-0000-000000000000
 - !<SceneObject/b1f8254d-7ff0-4786-bdb0-5811371eac87>
   PrefabRemaps:
     []
@@ -2979,6 +3333,12 @@
     tubeRadiusCm: true
     tubeSides: true
     visibleBehindM: true
+    segmentedEnabled: true
+    dashLengthM: true
+    dashGapM: true
+    curveSmoothingEnabled: true
+    subdivisionLengthCm: true
+    tipUp: true
     tipHeightOffsetCm: true
     hideTipWhenInactive: true
     verbose: true
@@ -2994,8 +3354,14 @@
       heightOffsetCm: !<float> -100.000000
       visibleBehindM: !<float> 1.000000
       visibleAheadM: !<float> 10.000000
+      segmentedEnabled: true
+      dashLengthM: !<float> 3.000000
+      dashGapM: !<float> 2.000000
+      curveSmoothingEnabled: true
+      subdivisionLengthCm: !<float> 40.000000
       tipObject: !<reference.SceneObject> 01fe536e-3964-40dd-935f-93e82a6d33b1
       tipForward: !<Vec3> {x: 0.000000, y: 90.000000, z: -1.000000}
+      tipUp: !<Vec3> {x: 0.000000, y: 0.000000, z: 1.000000}
       tipHeightOffsetCm: !<float> 0.000000
       hideTipWhenInactive: true
       verbose: false
@@ -3464,6 +3830,40 @@
     - !<own> 2fa6895d-6663-4624-9e74-6b038b982135
   Components:
     []
+- !<ScriptComponent/cc4bc773-40e4-413d-8146-c2ce1d3c734a>
+  PrefabRemaps:
+    []
+  Name: SafetyErrorInjector
+  Enabled: true
+  ScriptAsset: !<reference> 17e4e3b6-25f8-4bd6-b5a8-699d1f6c6763
+  ScriptInputsDefault:
+    injectGpsLoss: true
+    injectGpsStaleS: true
+    injectGpsAccuracyM: true
+    injectPositionOffsetM: true
+    triggerPoseJump: true
+    injectSpeedKmh: true
+    injectLowBattery: true
+    injectThermalThrottle: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      confidenceMonitor: !<reference.ScriptComponent> d2f6c7e0-856b-4695-8ac7-38c69c8a5da4
+      speedProvider: !<reference.ScriptComponent> e81890bf-bef4-40b3-8672-9a55a9ff25f2
+      stateMachine: !<reference.ScriptComponent> 6db6f13c-07fa-4285-8cbe-29f54f60c6ce
+      enabledInjector: false
+      injectGpsLoss: false
+      injectGpsStaleS: !<float> 0.000000
+      injectGpsAccuracyM: !<float> 0.000000
+      injectPositionOffsetM: !<float> 0.000000
+      triggerPoseJump: false
+      injectSpeedKmh: !<float> -1.000000
+      injectLowBattery: false
+      injectThermalThrottle: false
+  ScriptTypes:
+    "":
+      {}
 - !<SceneObject/cc851f59-7d95-4dbe-a9c0-c336f5593682>
   PrefabRemaps:
     []
@@ -3509,6 +3909,53 @@
     - !<own> 7dbdd563-5651-4640-8d68-0be06bbb0b57
   Components:
     - !<own> b426d87f-c8a6-47bf-a64e-7be86f43921d
+- !<ScriptComponent/d2f6c7e0-856b-4695-8ac7-38c69c8a5da4>
+  PrefabRemaps:
+    []
+  Name: LocalizationConfidenceMonitor
+  Enabled: true
+  ScriptAsset: !<reference> dcf3cb58-213d-41e6-b3db-3fd61d71aef2
+  ScriptInputsDefault:
+    mediumGpsAgeS: true
+    lowGpsAgeS: true
+    lostGpsAgeS: true
+    mediumAccuracyM: true
+    lowAccuracyM: true
+    mediumCrossTrackM: true
+    lowCrossTrackM: true
+    mediumAnchorYawErrDeg: true
+    mediumAnchorTranslationErrM: true
+    mediumSpeedDisagreementKmh: true
+    lowSpeedDisagreementKmh: true
+    poseJumpDistanceM: true
+    resetHoldS: true
+    upgradeDwellS: true
+    verbose: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      routeController: !<reference.ScriptComponent> 8e53bcf2-faf3-425f-90de-7d63be4fe9ce
+      speedProvider: !<reference.ScriptComponent> e81890bf-bef4-40b3-8672-9a55a9ff25f2
+      cameraObject: !<reference.SceneObject> 00000000-0000-0065-0000-000000000064
+      mediumGpsAgeS: !<float> 3.000000
+      lowGpsAgeS: !<float> 8.000000
+      lostGpsAgeS: !<float> 15.000000
+      mediumAccuracyM: !<float> 15.000000
+      lowAccuracyM: !<float> 30.000000
+      mediumCrossTrackM: !<float> 15.000000
+      lowCrossTrackM: !<float> 35.000000
+      mediumAnchorYawErrDeg: !<float> 15.000000
+      mediumAnchorTranslationErrM: !<float> 8.000000
+      mediumSpeedDisagreementKmh: !<float> 8.000000
+      lowSpeedDisagreementKmh: !<float> 16.000000
+      poseJumpDistanceM: !<float> 2.000000
+      resetHoldS: !<float> 3.000000
+      upgradeDwellS: !<float> 3.000000
+      verbose: false
+  ScriptTypes:
+    "":
+      {}
 - !<SceneObject/d3340ef4-90e8-49c1-aeb6-4194ed9937f9>
   PrefabRemaps:
     []
@@ -3556,6 +4003,7 @@
   ScriptInputs:
     "":
       speedText: !<reference.Text> c90ca72b-c154-48fb-bde8-09c6c5550962
+      speedProvider: !<reference.ScriptComponent> e81890bf-bef4-40b3-8672-9a55a9ff25f2
       useMph: true
       pollIntervalS: 0.500000
       outputSmoothAlpha: 0.250000
@@ -3678,6 +4126,29 @@
     index-2: !<reference> eeefed81-5683-4d40-9498-fd8984e6e8f6
     thumb-3_end_end_end_end: !<reference> 1fbad860-d2cc-4f57-a307-5ac38abfa448
     wrist_to_pinky: !<reference> 4d75f471-9b48-4b6f-aa35-ecb1d7d4c0fb
+- !<ScriptComponent/d8ffb1b7-e6f5-434b-b1e1-55d12385fee2>
+  PrefabRemaps:
+    []
+  Name: TelemetryLogger
+  Enabled: true
+  ScriptAsset: !<reference> 3a69073d-7a6a-4d07-aa7e-f8dff6247110
+  ScriptInputsDefault:
+    flushIntervalS: true
+    maxBufferedEvents: true
+    maxEventsPerFlush: true
+    echoToLog: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      bridge: !<reference.ScriptComponent> 1699c615-fd6d-4a20-a849-e7407518b641
+      flushIntervalS: !<float> 5.000000
+      maxBufferedEvents: !<float> 400.000000
+      maxEventsPerFlush: !<float> 25.000000
+      echoToLog: false
+  ScriptTypes:
+    "":
+      {}
 - !<SceneObject/d964d7ff-53e5-4435-bb84-a73bb279839e>
   PrefabRemaps:
     []
@@ -3857,6 +4328,35 @@
     []
   Components:
     []
+- !<ScriptComponent/e81890bf-bef4-40b3-8672-9a55a9ff25f2>
+  PrefabRemaps:
+    []
+  Name: SpeedProvider
+  Enabled: true
+  ScriptAsset: !<reference> b6547944-0149-49cf-8458-e8c147f96265
+  ScriptInputsDefault:
+    pollIntervalS: true
+    smoothAlpha: true
+    staleTimeoutS: true
+    movingThresholdKmh: true
+    stoppedThresholdKmh: true
+    movingDwellS: true
+    stoppedDwellS: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      routeController: !<reference.ScriptComponent> 8e53bcf2-faf3-425f-90de-7d63be4fe9ce
+      pollIntervalS: 0.500000
+      smoothAlpha: 0.250000
+      staleTimeoutS: !<float> 3.000000
+      movingThresholdKmh: !<float> 3.000000
+      stoppedThresholdKmh: 1.500000
+      movingDwellS: 0.500000
+      stoppedDwellS: !<float> 2.000000
+  ScriptTypes:
+    "":
+      {}
 - !<Text/e83735ca-81d1-44d2-88d1-689a8ceb3765>
   PrefabRemaps:
     []

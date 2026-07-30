@@ -23,6 +23,10 @@
 		D100000000000000000000B7 /* RideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D100000000000000000000B6 /* RideView.swift */; };
 		D100000000000000000000B9 /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D100000000000000000000B8 /* LocationProvider.swift */; };
 		D100000000000000000000BB /* AddressCompleter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D100000000000000000000BA /* AddressCompleter.swift */; };
+		D100000000000000000000BD /* OverpassClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D100000000000000000000BC /* OverpassClient.swift */; };
+		D100000000000000000000BF /* RouteChunk.swift in Sources */ = {isa = PBXBuildFile; fileRef = D100000000000000000000BE /* RouteChunk.swift */; };
+		D100000000000000000000E1 /* RoadGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = D100000000000000000000E0 /* RoadGraph.swift */; };
+		D100000000000000000000E3 /* RouteMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D100000000000000000000E2 /* RouteMatcher.swift */; };
 		D100000000000000000000C3 /* NowPlayingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D100000000000000000000C2 /* NowPlayingService.swift */; };
 		D100000000000000000000C5 /* NowPlayingPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = D100000000000000000000C4 /* NowPlayingPayload.swift */; };
 		D100000000000000000000C7 /* MusicController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D100000000000000000000C6 /* MusicController.swift */; };
@@ -49,6 +53,10 @@
 		D100000000000000000000B6 /* RideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideView.swift; sourceTree = "<group>"; };
 		D100000000000000000000B8 /* LocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProvider.swift; sourceTree = "<group>"; };
 		D100000000000000000000BA /* AddressCompleter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressCompleter.swift; sourceTree = "<group>"; };
+		D100000000000000000000BC /* OverpassClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverpassClient.swift; sourceTree = "<group>"; };
+		D100000000000000000000BE /* RouteChunk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteChunk.swift; sourceTree = "<group>"; };
+		D100000000000000000000E0 /* RoadGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoadGraph.swift; sourceTree = "<group>"; };
+		D100000000000000000000E2 /* RouteMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteMatcher.swift; sourceTree = "<group>"; };
 		D100000000000000000000C2 /* NowPlayingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingService.swift; sourceTree = "<group>"; };
 		D100000000000000000000C4 /* NowPlayingPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingPayload.swift; sourceTree = "<group>"; };
 		D100000000000000000000C6 /* MusicController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicController.swift; sourceTree = "<group>"; };
@@ -138,6 +146,10 @@
 				D100000000000000000000B6 /* RideView.swift */,
 				D100000000000000000000B8 /* LocationProvider.swift */,
 				D100000000000000000000BA /* AddressCompleter.swift */,
+				D100000000000000000000BC /* OverpassClient.swift */,
+				D100000000000000000000BE /* RouteChunk.swift */,
+				D100000000000000000000E0 /* RoadGraph.swift */,
+				D100000000000000000000E2 /* RouteMatcher.swift */,
 			);
 			path = Routing;
 			sourceTree = "<group>";
@@ -250,6 +262,10 @@
 				D100000000000000000000B7 /* RideView.swift in Sources */,
 				D100000000000000000000B9 /* LocationProvider.swift in Sources */,
 				D100000000000000000000BB /* AddressCompleter.swift in Sources */,
+				D100000000000000000000BD /* OverpassClient.swift in Sources */,
+				D100000000000000000000BF /* RouteChunk.swift in Sources */,
+				D100000000000000000000E1 /* RoadGraph.swift in Sources */,
+				D100000000000000000000E3 /* RouteMatcher.swift in Sources */,
 				D100000000000000000000C3 /* NowPlayingService.swift in Sources */,
 				D100000000000000000000C5 /* NowPlayingPayload.swift in Sources */,
 				D100000000000000000000C7 /* MusicController.swift in Sources */,

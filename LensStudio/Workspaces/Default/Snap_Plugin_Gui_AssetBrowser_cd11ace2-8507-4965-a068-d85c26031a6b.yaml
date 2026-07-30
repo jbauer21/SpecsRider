@@ -1,7 +1,7 @@
 CollapsedEntities:
   type: stringset
   value:
-    size: 636
+    size: 637
     values:
       - Base.png
       - Cone.mesh
@@ -12,6 +12,7 @@ CollapsedEntities:
       - Image.png
       - Internet Module.internetModule
       - MaterialParams.png
+      - Materials
       - Materials/Back.png
       - Materials/Forward.png
       - Materials/ImageMaterial 2.mat
